@@ -1,5 +1,4 @@
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
-import { json } from "react-router";
 import { useLoaderData, Link } from "react-router";
 import { UserButton } from "@clerk/react-router";
 import { requireAuth } from "~/services";
@@ -15,7 +14,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // Require authentication
   const { user } = await requireAuth({ request } as LoaderFunctionArgs);
 
-  return json({ user });
+  return { user };
 }
 
 export default function Dashboard() {

@@ -4,9 +4,10 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "react-router";
 import type { LinksFunction } from "react-router";
-import { ClerkApp } from "@clerk/react-router";
+import { ClerkProvider } from "@clerk/react-router";
 
 import "./tailwind.css";
 
@@ -22,6 +23,14 @@ export const links: LinksFunction = () => [
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   },
 ];
+
+export async function loader() {
+  return {
+    ENV: {
+      CLERK_PUBLISHABLE_KEY: process.env.VITE_CLERK_PUBLISHABLE_KEY || "",
+    },
+  };
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -41,8 +50,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-function App() {
-  return <Outlet />;
+export default function App() {
+  const { ENV } = useLoaderData<typeof loader>();
+  
+  return (
+    <ClerkProvider publishableKey={ENV.CLERK_PUBLISHABLE_KEY}>
+      <Outlet />
+    </ClerkProvider>
+  );
 }
-
-export default ClerkApp(App);

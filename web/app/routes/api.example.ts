@@ -1,5 +1,4 @@
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
-import { json } from "react-router";
 import { requireAuth, cache } from "~/services";
 import type { ApiResponse } from "@saas-template/shared";
 
@@ -35,7 +34,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       }
     };
 
-    return json(response);
+    return Response.json(response);
   } catch (error) {
     const response: ApiResponse = {
       success: false,
@@ -45,7 +44,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       }
     };
 
-    return json(response, { status: 500 });
+    return Response.json(response, { status: 500 });
   }
 }
 
@@ -71,7 +70,7 @@ export async function action({ request }: ActionFunctionArgs) {
           message: 'Preference and value are required'
         }
       };
-      return json(response, { status: 400 });
+      return Response.json(response, { status: 400 });
     }
 
     // In a real app, you would save this to the database
@@ -89,7 +88,7 @@ export async function action({ request }: ActionFunctionArgs) {
       }
     };
 
-    return json(response, { status: 200 });
+    return Response.json(response, { status: 200 });
   } catch (error) {
     const response: ApiResponse = {
       success: false,
@@ -99,6 +98,6 @@ export async function action({ request }: ActionFunctionArgs) {
       }
     };
 
-    return json(response, { status: 500 });
+    return Response.json(response, { status: 500 });
   }
 }
