@@ -37,6 +37,12 @@
           "addGeneratedScheme": false
         }
       ],
+      [
+        "expo-web-browser",
+        {
+          "createTask": false
+        }
+      ],
       "./plugins/withExpoAutolinking",
       "./plugins/withKotlinVersion"
     ],
