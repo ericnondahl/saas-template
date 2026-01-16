@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSignIn } from '@clerk/clerk-expo';
 
@@ -13,7 +13,7 @@ export default function SignInScreen() {
       // You can customize this with your own sign-in form
       
       // This is a placeholder - implement your sign-in logic here
-      alert('Implement sign-in logic here. See Clerk documentation for examples.');
+      Alert.alert('Sign In', 'Implement sign-in logic here. See Clerk documentation for examples.');
     } catch (err) {
       console.error('Sign in error:', err);
     }
