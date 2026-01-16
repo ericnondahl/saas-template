@@ -7,7 +7,7 @@
     "icon": "./assets/icon.png",
     "scheme": "saastemplate",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -36,7 +36,8 @@
         {
           "addGeneratedScheme": false
         }
-      ]
+      ],
+      "./plugins/withExpoAutolinking"
     ],
     "experiments": {
       "typedRoutes": true
