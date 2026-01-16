@@ -133,7 +133,7 @@ Always specify version ranges appropriately.
 
 - Update README.md for major features
 - Add inline comments for complex logic
-- Update SETUP.md if setup process changes
+- Update QUICKSTART.md if setup process changes
 - Add examples for new features
 
 ## Questions?

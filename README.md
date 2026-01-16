@@ -66,9 +66,6 @@ npm run install:all
 Copy the example env files and fill in your values:
 
 ```bash
-# Root
-cp .env.example .env
-
 # Web
 cp web/.env.example web/.env
 
@@ -217,6 +214,8 @@ npx prisma migrate reset
 # Open Prisma Studio
 npm run db:studio
 ```
+
+**Note:** All Prisma commands automatically load environment variables from `web/.env`, so make sure that file has your `DATABASE_URL` configured.
 
 ## 📱 Mobile Development
 

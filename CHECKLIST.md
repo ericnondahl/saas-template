@@ -11,13 +11,12 @@ Use this checklist to ensure everything is set up correctly.
 
 ## Environment Configuration
 
-- [ ] Copy `.env.example` to `.env` in root
 - [ ] Copy `web\.env.example` to `web\.env`
 - [ ] Copy `mobile\.env.example` to `mobile\.env`
-- [ ] Added Clerk Publishable Key to all .env files
-- [ ] Added Clerk Secret Key to root and web .env files
-- [ ] Database URL configured (default: `postgresql://postgres:postgres@localhost:5432/saas_dev`)
-- [ ] Redis URL configured (default: `redis://localhost:6379`)
+- [ ] Added Clerk Publishable Key to `web\.env` and `mobile\.env`
+- [ ] Added Clerk Secret Key to `web\.env`
+- [ ] Database URL configured in `web\.env` (default: `postgresql://postgres:postgres@localhost:5432/saas_dev`)
+- [ ] Redis URL configured in `web\.env` (default: `redis://localhost:6379`)
 
 ## Dependencies
 
@@ -102,8 +101,7 @@ Use this checklist to ensure everything is set up correctly.
 
 If any checkbox above fails, refer to:
 
-- [QUICKSTART.md](./QUICKSTART.md) - Quick commands
-- [SETUP.md](./SETUP.md) - Detailed setup with troubleshooting
+- [QUICKSTART.md](./QUICKSTART.md) - Complete setup guide with troubleshooting
 - [README.md](./README.md) - Full documentation
 
 ## Common Issues

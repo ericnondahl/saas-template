@@ -15,16 +15,17 @@
     "dev:mobile": "npm run start --workspace=mobile",
     "test": "npm run test --workspace=web && npm run test --workspace=packages/shared",
     "typecheck": "npm run typecheck --workspace=web && npm run typecheck --workspace=mobile && npm run typecheck --workspace=packages/shared",
-    "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev",
-    "db:push": "prisma db push",
-    "db:studio": "prisma studio",
+    "db:generate": "dotenv -e web/.env -- prisma generate",
+    "db:migrate": "dotenv -e web/.env -- prisma migrate dev",
+    "db:push": "dotenv -e web/.env -- prisma db push",
+    "db:studio": "dotenv -e web/.env -- prisma studio",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs -f"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
+    "dotenv-cli": "^11.0.0",
     "prisma": "^5.9.0",
     "typescript": "^5.3.3"
   },
