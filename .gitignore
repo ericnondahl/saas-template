@@ -49,12 +49,7 @@ prisma/migrations/
 .expo/
 .expo-shared/
 
-# Mobile
-mobile/ios/Pods/
-mobile/ios/build/
-mobile/android/.gradle/
-mobile/android/build/
-mobile/android/app/build/
+# Mobile - native signing keys
 *.jks
 *.keystore
 
