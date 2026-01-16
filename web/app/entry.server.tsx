@@ -1,21 +1,42 @@
 import type { EntryContext } from "react-router";
 import { ServerRouter } from "react-router";
-import { renderToString } from "react-dom/server";
+import { isbot } from "isbot";
+import { renderToReadableStream } from "react-dom/server";
 
-export default function handleRequest(
+export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
   routerContext: EntryContext
 ) {
-  const html = renderToString(
-    <ServerRouter context={routerContext} url={request.url} />
+  let shellRendered = false;
+  const userAgent = request.headers.get("user-agent");
+
+  const stream = await renderToReadableStream(
+    <ServerRouter context={routerContext} url={request.url} />,
+    {
+      onError(error: unknown) {
+        responseStatusCode = 500;
+        // Log streaming rendering errors from inside the shell.  Don't log
+        // errors encountered during initial shell rendering since they'll
+        // reject and get logged in handleDocumentRequest.
+        if (shellRendered) {
+          console.error(error);
+        }
+      },
+    }
   );
+  shellRendered = true;
+
+  // For bots, wait for the full content to be available
+  if (userAgent && isbot(userAgent)) {
+    await stream.allReady;
+  }
 
   responseHeaders.set("Content-Type", "text/html");
 
-  return new Response(`<!DOCTYPE html>${html}`, {
-    status: responseStatusCode,
+  return new Response(stream, {
     headers: responseHeaders,
+    status: responseStatusCode,
   });
 }
