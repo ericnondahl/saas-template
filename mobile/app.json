@@ -37,7 +37,8 @@
           "addGeneratedScheme": false
         }
       ],
-      "./plugins/withExpoAutolinking"
+      "./plugins/withExpoAutolinking",
+      "./plugins/withKotlinVersion"
     ],
     "experiments": {
       "typedRoutes": true
