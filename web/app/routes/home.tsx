@@ -6,13 +6,31 @@ import {
   UserButton,
   useUser,
 } from "@clerk/react-router";
+import { getAuth } from "@clerk/react-router/server";
+import { createClerkClient } from "@clerk/react-router/api.server";
 import type { Route } from "./+types/home";
+import { syncUser } from "../services/user.server";
 
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "SaaS Template - Home" },
     { name: "description", content: "Welcome to the SaaS Template!" },
   ];
+}
+
+export async function loader(args: Route.LoaderArgs) {
+  const { userId } = await getAuth(args);
+
+  if (userId) {
+    // User is signed in - sync to database
+    const clerkClient = createClerkClient({
+      secretKey: process.env.CLERK_SECRET_KEY,
+    });
+    const clerkUser = await clerkClient.users.getUser(userId);
+    await syncUser(clerkUser);
+  }
+
+  return { synced: !!userId };
 }
 
 export default function Home() {
