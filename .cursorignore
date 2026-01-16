@@ -1,0 +1,24 @@
+# Ignore files from Cursor AI indexing
+
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Build outputs
+dist/
+build/
+.cache/
+.react-router/
+.expo/
+
+# Generated files
+*.tsbuildinfo
+
+# Database
+prisma/migrations/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*

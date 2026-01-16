@@ -1,0 +1,38 @@
+{
+  "name": "saas-template",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack SaaS template with React Router 7, Expo, and shared packages",
+  "workspaces": [
+    "web",
+    "mobile",
+    "packages/*"
+  ],
+  "scripts": {
+    "install:all": "npm install && cd web && npm install && cd ../mobile && npm install && cd ../packages/shared && npm install && cd ../..",
+    "build": "npm run build --workspace=packages/shared && npm run build --workspace=web",
+    "dev:web": "npm run dev --workspace=web",
+    "dev:mobile": "npm run start --workspace=mobile",
+    "test": "npm run test --workspace=web && npm run test --workspace=packages/shared",
+    "typecheck": "npm run typecheck --workspace=web && npm run typecheck --workspace=mobile && npm run typecheck --workspace=packages/shared",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "prisma": "^5.9.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.9.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
