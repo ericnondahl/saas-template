@@ -1,36 +1,30 @@
 {
-  "name": "@saas-template/web",
-  "version": "1.0.0",
+  "name": "web",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "react-router dev",
     "build": "react-router build",
+    "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
-    "@clerk/react-router": "^1.0.4",
-    "@prisma/client": "^5.9.0",
-    "@saas-template/shared": "*",
-    "isbot": "^5.1.0",
-    "ioredis": "^5.3.2",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router": "^7.1.1"
+    "@react-router/node": "7.12.0",
+    "@react-router/serve": "7.12.0",
+    "isbot": "^5.1.31",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-router": "7.12.0"
   },
   "devDependencies": {
-    "@react-router/dev": "^7.1.1",
-    "@react-router/node": "^7.1.1",
-    "@react-router/serve": "^7.1.1",
-    "@types/node": "^20.11.0",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "autoprefixer": "^10.4.17",
-    "postcss": "^8.4.35",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5.3.3",
-    "vite": "^6.0.1",
+    "@react-router/dev": "7.12.0",
+    "@tailwindcss/vite": "^4.1.13",
+    "@types/node": "^22",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.7",
     "vite-tsconfig-paths": "^5.1.4"
   }
 }

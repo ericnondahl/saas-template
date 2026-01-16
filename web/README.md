@@ -1,55 +1,87 @@
-# Web Application
+# Welcome to React Router!
 
-React Router 7 web application with server-side rendering.
+A modern, production-ready template for building full-stack React applications using React Router.
+
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
 
 ## Features
 
-- **React Router 7** with SSR
-- **Clerk Authentication** for user management
-- **Prisma** for database ORM
-- **Redis** for caching
-- **Tailwind CSS** for styling
-- **TypeScript** for type safety
+- 🚀 Server-side rendering
+- ⚡️ Hot Module Replacement (HMR)
+- 📦 Asset bundling and optimization
+- 🔄 Data loading and mutations
+- 🔒 TypeScript by default
+- 🎉 TailwindCSS for styling
+- 📖 [React Router docs](https://reactrouter.com/)
 
-## Development
+## Getting Started
+
+### Installation
+
+Install the dependencies:
 
 ```bash
-# Install dependencies
 npm install
+```
 
-# Run development server
+### Development
+
+Start the development server with HMR:
+
+```bash
 npm run dev
+```
 
-# Build for production
+Your application will be available at `http://localhost:5173`.
+
+## Building for Production
+
+Create a production build:
+
+```bash
 npm run build
-
-# Start production server
-npm start
-
-# Type check
-npm run typecheck
 ```
 
-## Project Structure
+## Deployment
+
+### Docker Deployment
+
+To build and run using Docker:
+
+```bash
+docker build -t my-app .
+
+# Run the container
+docker run -p 3000:3000 my-app
+```
+
+The containerized application can be deployed to any platform that supports Docker, including:
+
+- AWS ECS
+- Google Cloud Run
+- Azure Container Apps
+- Digital Ocean App Platform
+- Fly.io
+- Railway
+
+### DIY Deployment
+
+If you're familiar with deploying Node applications, the built-in app server is production-ready.
+
+Make sure to deploy the output of `npm run build`
 
 ```
-web/
-├── app/
-│   ├── routes/           # Application routes
-│   ├── services/         # Service layer (auth, db, cache)
-│   ├── root.tsx          # Root component
-│   └── routes.ts         # Route configuration
-├── public/               # Static assets
-└── vite.config.ts        # Vite configuration
+├── package.json
+├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
+├── build/
+│   ├── client/    # Static assets
+│   └── server/    # Server-side code
 ```
 
-## Environment Variables
+## Styling
 
-Create a `.env` file in the `web` directory:
+This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
 
-```
-CLERK_PUBLISHABLE_KEY=pk_test_xxx
-CLERK_SECRET_KEY=sk_test_xxx
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/saas_dev
-REDIS_URL=redis://localhost:6379
-```
+---
+
+Built with ❤️ using React Router.

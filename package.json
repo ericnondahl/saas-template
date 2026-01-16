@@ -4,7 +4,6 @@
   "private": true,
   "description": "Full-stack SaaS template with React Router 7, Expo, and shared packages",
   "workspaces": [
-    "web",
     "mobile",
     "packages/*"
   ],
