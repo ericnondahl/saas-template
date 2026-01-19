@@ -1,10 +1,61 @@
-import { View, Text, StyleSheet, Image, Pressable, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Alert, ActivityIndicator } from 'react-native';
 import { useUser, useAuth } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
+import { useState, useEffect } from 'react';
+import { UserDTO, ApiResponse } from '@saas-template/shared';
+import { UserProfile } from '../../components/UserProfile';
+
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5173';
 
 export default function ProfileScreen() {
-  const { user } = useUser();
-  const { signOut } = useAuth();
+  const { user, isLoaded } = useUser();
+  const { signOut, getToken } = useAuth();
+  const [userData, setUserData] = useState<UserDTO | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch user data from API
+  useEffect(() => {
+    if (isLoaded && user) {
+      fetchUserData();
+    } else {
+      setUserData(null);
+    }
+  }, [isLoaded, user]);
+
+  const fetchUserData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Get Clerk session token for authentication
+      const token = await getToken();
+      
+      if (!token) {
+        setError('Not authenticated');
+        return;
+      }
+
+      const response = await fetch(`${API_URL}/api/user`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const data: ApiResponse<UserDTO> = await response.json();
+
+      if (data.success && data.data) {
+        setUserData(data.data);
+      } else {
+        setError(data.error?.message || 'Failed to load user data');
+      }
+    } catch (err) {
+      console.error('[PROFILE] Error fetching user:', err);
+      setError('Failed to load user data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSignOut = () => {
     Alert.alert(
@@ -22,39 +73,27 @@ export default function ProfileScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        {user?.imageUrl ? (
-          <Image 
-            source={{ uri: user.imageUrl }} 
-            style={styles.avatar}
-          />
-        ) : (
-          <View style={styles.avatarPlaceholder}>
-            <Ionicons name="person" size={48} color="#9ca3af" />
-          </View>
-        )}
-        <Text style={styles.name}>
-          {user?.firstName} {user?.lastName}
-        </Text>
-        <Text style={styles.email}>{user?.primaryEmailAddress?.emailAddress}</Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Account</Text>
-        
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>User ID</Text>
-          <Text style={styles.infoValue}>{user?.id?.slice(0, 12)}...</Text>
+    <ScrollView style={styles.container}>
+      {loading && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#3b82f6" />
+          <Text style={styles.loadingText}>Loading user data...</Text>
         </View>
+      )}
 
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Member since</Text>
-          <Text style={styles.infoValue}>
-            {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
-          </Text>
+      {error && (
+        <View style={styles.errorContainer}>
+          <Ionicons name="alert-circle" size={24} color="#dc2626" />
+          <Text style={styles.errorText}>{error}</Text>
+          <Pressable style={styles.retryButton} onPress={fetchUserData}>
+            <Text style={styles.retryButtonText}>Retry</Text>
+          </Pressable>
         </View>
-      </View>
+      )}
+
+      {!loading && !error && userData && (
+        <UserProfile user={userData} />
+      )}
 
       <View style={styles.section}>
         <Pressable 
@@ -65,7 +104,7 @@ export default function ProfileScreen() {
           <Text style={styles.buttonText}>Sign Out</Text>
         </Pressable>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -74,38 +113,42 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f9fafb',
   },
-  header: {
-    backgroundColor: '#ffffff',
-    alignItems: 'center',
-    paddingVertical: 32,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
-  },
-  avatar: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    marginBottom: 16,
-  },
-  avatarPlaceholder: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    backgroundColor: '#f3f4f6',
+  loadingContainer: {
+    padding: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
   },
-  name: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 4,
-  },
-  email: {
+  loadingText: {
+    marginTop: 12,
     fontSize: 16,
     color: '#6b7280',
+  },
+  errorContainer: {
+    margin: 16,
+    padding: 20,
+    backgroundColor: '#fef2f2',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#fecaca',
+    alignItems: 'center',
+  },
+  errorText: {
+    marginTop: 8,
+    fontSize: 16,
+    color: '#dc2626',
+    textAlign: 'center',
+  },
+  retryButton: {
+    marginTop: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    backgroundColor: '#3b82f6',
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
   },
   section: {
     backgroundColor: '#ffffff',
@@ -115,29 +158,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: '#e5e7eb',
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#111827',
-    marginBottom: 16,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f3f4f6',
-  },
-  infoLabel: {
-    fontSize: 16,
-    color: '#6b7280',
-  },
-  infoValue: {
-    fontSize: 16,
-    color: '#111827',
-    fontWeight: '500',
   },
   button: {
     flexDirection: 'row',

@@ -1,4 +1,6 @@
 import { db } from "./db.server";
+import type { UserDTO } from "@saas-template/shared";
+import type { User as PrismaUser } from "@prisma/client";
 
 interface ClerkUser {
   id: string;
@@ -46,4 +48,26 @@ export async function getUserByClerkId(clerkId: string) {
   return db.user.findUnique({
     where: { clerkId },
   });
+}
+
+/**
+ * Converts a Prisma User to a UserDTO (without timestamps).
+ */
+export function userToDTO(user: PrismaUser): UserDTO {
+  return {
+    id: user.id,
+    clerkId: user.clerkId,
+    email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    imageUrl: user.imageUrl,
+  };
+}
+
+/**
+ * Gets a user DTO from the database by their Clerk ID.
+ */
+export async function getUserDTOByClerkId(clerkId: string): Promise<UserDTO | null> {
+  const user = await getUserByClerkId(clerkId);
+  return user ? userToDTO(user) : null;
 }

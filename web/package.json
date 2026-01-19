@@ -13,6 +13,7 @@
     "@prisma/client": "^7.2.0",
     "@react-router/node": "7.12.0",
     "@react-router/serve": "7.12.0",
+    "@saas-template/shared": "*",
     "expo-auth-session": "^7.0.10",
     "expo-crypto": "^15.0.8",
     "isbot": "^5.1.31",
