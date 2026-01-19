@@ -11,9 +11,11 @@ A production-ready full-stack SaaS template with React Router 7 (SSR), Expo Reac
 - **Clerk Authentication** - Secure user authentication out of the box
 - **Prisma ORM** - Type-safe database access
 - **Redis Caching** - High-performance caching layer
-- **Resend Email** - Eemail service for notifications using Resend API with unsubscribe
+- **OpenRouter AI** - AI/LLM integration with 300+ models, usage tracking, and cost monitoring
+- **Resend Email** - Email service for notifications using Resend API with unsubscribe
+- **Admin Dashboard** - Built-in admin panel with user management and AI usage analytics
 - **Docker Compose** - Local development with PostgreSQL and Redis
-- **Modular Service Layer** - Easy to swap providers (auth, db, cache, email)
+- **Modular Service Layer** - Easy to swap providers (auth, db, cache, email, AI)
 
 ## 📁 Project Structure
 
@@ -180,7 +182,25 @@ The web app uses a modular service layer in `web/app/services/`:
   - `sendEmail()` - Send transactional emails
   - Template support for welcome emails, notifications, etc.
 
+- **`ai.server.ts`** - Wraps OpenRouter AI service
+  - `openrouter<T>()` - Call AI models with typed responses
+  - Automatic usage and cost tracking
+  - Redis-cached model pricing (24h TTL)
+  - Support for structured JSON outputs via JSON schema
+  - All calls logged to database for analytics
+
 This abstraction makes it easy to swap providers if needed.
+
+### Admin Panel
+
+The template includes a built-in admin panel at `/admin` with:
+
+- **User Management** - View all users and manage admin privileges
+- **API Logs** - View recent OpenRouter API calls with full request/response details
+- **Usage Dashboard** - Monitor AI usage and costs over time with charts
+  - Total cost, calls, and tokens
+  - Daily usage trends
+  - Per-model breakdown
 
 ### Database Schema
 
@@ -285,6 +305,7 @@ npm run typecheck
 - [Clerk Documentation](https://clerk.com/docs)
 - [Prisma Documentation](https://www.prisma.io/docs)
 - [Redis Documentation](https://redis.io/docs)
+- [OpenRouter Documentation](https://openrouter.ai/docs)
 - [Resend Documentation](https://resend.com/docs)
 
 ## 🤝 Contributing
@@ -303,7 +324,9 @@ Built with amazing open-source projects:
 - Clerk
 - Prisma
 - Redis
+- OpenRouter
 - Resend
+- Recharts
 - Tailwind CSS
 - TypeScript
 

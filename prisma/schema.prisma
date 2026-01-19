@@ -25,3 +25,20 @@ model User {
   @@index([clerkId])
   @@index([email])
 }
+
+model OpenRouterLog {
+  id           String   @id @default(cuid())
+  model        String
+  inputText    String   @db.Text
+  outputText   String   @db.Text
+  inputTokens  Int
+  outputTokens Int
+  totalTokens  Int
+  inputCost    Decimal  @db.Decimal(10, 8)
+  outputCost   Decimal  @db.Decimal(10, 8)
+  totalCost    Decimal  @db.Decimal(10, 8)
+  createdAt    DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([model])
+}

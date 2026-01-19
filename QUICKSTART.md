@@ -8,6 +8,7 @@ Get your SaaS template up and running in 5 minutes!
 - Docker Desktop running
 - A Clerk account (free at [clerk.com](https://clerk.com))
 - A Resend account (optional, for emails - free at [resend.com](https://resend.com))
+- An OpenRouter account (optional, for AI - free tier at [openrouter.ai](https://openrouter.ai))
 
 ## Quick Setup Commands
 
@@ -39,6 +40,11 @@ Copy-Item mobile\.env.example mobile\.env
 2. Create an API key from your dashboard
 3. Copy your API Key (starts with `re_`)
 
+**OpenRouter (Optional, for AI):**
+1. Go to [openrouter.ai](https://openrouter.ai) and sign up/sign in
+2. Go to Settings > Keys and create an API key
+3. Copy your API Key (starts with `sk-or-`)
+
 ### 4. Update Environment Files
 
 Edit `web\.env` and `mobile\.env` with your API keys:
@@ -49,6 +55,9 @@ Edit `web\.env` and `mobile\.env` with your API keys:
 
 **Optional (for email functionality):**
 - Add your Resend API key to `web\.env`: `RESEND_API_KEY=re_your_key_here`
+
+**Optional (for AI functionality):**
+- Add your OpenRouter API key to `web\.env`: `OPENROUTER_API_KEY=sk-or-your_key_here`
 
 ### 5. Start Docker Services
 
@@ -127,6 +136,7 @@ CLERK_SECRET_KEY=sk_test_your_key_here
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/saas_dev
 REDIS_URL=redis://localhost:6379
 RESEND_API_KEY=re_your_key_here  # Optional, for email functionality
+OPENROUTER_API_KEY=sk-or-your_key_here  # Optional, for AI functionality
 ```
 
 #### Mobile `.env` File
@@ -202,6 +212,17 @@ npm run db:studio
 ```
 
 Visit http://localhost:5555
+
+### Test Admin Panel
+
+1. Sign in to the web app
+2. Open Prisma Studio: `npm run db:studio`
+3. Find your user in the User table and set `isAdmin: true`
+4. Visit http://localhost:3000/admin
+5. You should see the admin dashboard with:
+   - **Admins** - Manage admin users
+   - **API Logs** - View OpenRouter API call history
+   - **Usage Dashboard** - Monitor AI usage and costs
 
 ### Test Redis
 
@@ -308,16 +329,23 @@ Common fixes:
    - Test the email service with `cd web && npx tsx scripts/test-welcome-email.ts`
    - Customize email templates in `web/app/services/email.server.ts`
 
-3. **Extend Database Schema**
+3. **Set Up AI Integration (Optional)**
+   - Get your OpenRouter API key from [openrouter.ai](https://openrouter.ai)
+   - Add `OPENROUTER_API_KEY` to `web/.env`
+   - Test the AI service with `cd web && npx tsx scripts/test-openrouter.ts`
+   - Use the `openrouter()` function in `web/app/services/ai.server.ts`
+   - View usage and costs in the admin panel at `/admin/openrouter-usage`
+
+4. **Extend Database Schema**
    - Edit `prisma/schema.prisma`
    - Run `npm run db:migrate` to create migrations
 
-4. **Add New Features**
+5. **Add New Features**
    - Web routes: Create files in `web/app/routes/`
    - Mobile screens: Create files in `mobile/app/`
    - Shared types: Add to `packages/shared/src/types/`
 
-5. **Deploy Your App**
+6. **Deploy Your App**
    - See deployment section in README.md
 
 ---
@@ -333,6 +361,7 @@ Common fixes:
   - [React Router Docs](https://reactrouter.com)
   - [Expo Documentation](https://docs.expo.dev)
   - [Prisma Documentation](https://www.prisma.io/docs)
+  - [OpenRouter Documentation](https://openrouter.ai/docs)
   - [Resend Documentation](https://resend.com/docs)
 
 ---

@@ -4,6 +4,8 @@
  */
 import "dotenv/config";
 import { openrouter } from "../app/services/ai.server";
+import { disconnect as disconnectCache } from "../app/services/cache.server";
+import { db } from "../app/services/db.server";
 
 /**
  * Expected response type for testing
@@ -17,7 +19,7 @@ console.log("Testing OpenRouter AI service...\n");
 try {
   const result = await openrouter<TestResponse>({
     prompt: "Say hello world",
-    model: "openai/gpt-4",
+    model: "anthropic/claude-sonnet-4.5",
     jsonSchema: {
       type: "object",
       properties: {
@@ -31,15 +33,34 @@ try {
   console.log("Response:", JSON.stringify(result, null, 2));
   
   // Verify the response matches expected type
-  if (result.message) {
+  if (result.data.message) {
     console.log("\n✓ Response has expected 'message' field");
-    console.log(`  Message content: "${result.message}"`);
+    console.log(`  Message content: "${result.data.message}"`);
   } else {
     console.warn("\n⚠ Warning: Response missing 'message' field");
   }
   
+  // Display usage and cost information
+  console.log("\n📊 Usage Statistics:");
+  console.log(`  Input tokens: ${result.usage.inputTokens}`);
+  console.log(`  Output tokens: ${result.usage.outputTokens}`);
+  console.log(`  Total tokens: ${result.usage.totalTokens}`);
+  console.log(`\n💰 Cost:`);
+  console.log(`  Input cost: $${result.cost.inputCost.toFixed(6)}`);
+  console.log(`  Output cost: $${result.cost.outputCost.toFixed(6)}`);
+  console.log(`  Total cost: $${result.cost.totalCost.toFixed(6)}`);
+  
 } catch (error) {
   console.error("\n✗ Failed to call OpenRouter:");
   console.error(error);
+  await cleanup();
   process.exit(1);
+}
+
+// Clean up connections so the script can exit
+await cleanup();
+
+async function cleanup() {
+  await disconnectCache();
+  await db.$disconnect();
 }
