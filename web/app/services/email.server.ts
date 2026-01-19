@@ -1,4 +1,6 @@
 import { Resend } from "resend";
+import { render } from "@react-email/components";
+import WelcomeEmail from "../emails/WelcomeEmail";
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -19,27 +21,15 @@ export async function sendWelcomeEmail(
     return null;
   }
 
-  const name = firstName || "there";
+  const html = await render(
+    WelcomeEmail({ firstName: firstName || undefined })
+  );
 
   const { data, error } = await resend.emails.send({
     from: process.env.EMAIL_FROM || "onboarding@resend.dev",
     to: email,
     subject: "Welcome to Our App!",
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h1 style="color: #333;">Welcome, ${name}!</h1>
-        <p style="color: #666; font-size: 16px;">
-          Thanks for signing up! We're excited to have you on board.
-        </p>
-        <p style="color: #666; font-size: 16px;">
-          Get started by exploring the app and let us know if you have any questions.
-        </p>
-        <p style="color: #666; font-size: 14px; margin-top: 30px;">
-          Best regards,<br/>
-          The Team
-        </p>
-      </div>
-    `,
+    html,
   });
 
   if (error) {
