@@ -68,6 +68,7 @@ export default function SignInScreen() {
   // Sync user to database after sign-in
   const syncUserToDatabase = async () => {
     try {
+      console.log('Syncing user to database');
       const token = await getToken();
       if (!token) {
         console.warn('No token available for sync');
