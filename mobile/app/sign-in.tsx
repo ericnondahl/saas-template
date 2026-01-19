@@ -14,11 +14,12 @@ import { useRouter, Link } from 'expo-router';
 import { useSignIn, useSSO, useAuth } from '@clerk/clerk-expo';
 import * as WebBrowser from 'expo-web-browser';
 import * as Linking from 'expo-linking';
-import * as AuthSession from 'expo-auth-session';
 import { Ionicons } from '@expo/vector-icons';
 
-// Required for OAuth to work properly - must be called outside component
-WebBrowser.maybeCompleteAuthSession();
+// Required for OAuth to work properly on web - only call on web platform
+if (Platform.OS === 'web') {
+  WebBrowser.maybeCompleteAuthSession();
+}
 
 // API URL for syncing user to database
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
@@ -98,10 +99,7 @@ export default function SignInScreen() {
       setIsLoading(true);
       setError(null);
       
-      const redirectUrl = AuthSession.makeRedirectUri({
-        scheme: 'saastemplate',
-        path: 'oauth-callback',
-      });
+      const redirectUrl = Linking.createURL('oauth-callback');
       console.log('Starting OAuth with redirect URL:', redirectUrl);
 
       const result = await startSSOFlow({
@@ -109,12 +107,18 @@ export default function SignInScreen() {
         redirectUrl,
       });
 
-      console.log('OAuth result:', JSON.stringify(result, null, 2));
+      // Note: Don't JSON.stringify the result - it has getters that access window.location
+      // which doesn't exist in React Native and causes "href of undefined" errors
+      console.log('OAuth completed, sessionId:', result.createdSessionId);
 
       if (result.createdSessionId) {
         await result.setActive!({ session: result.createdSessionId });
         await syncUserToDatabase();
         router.replace('/(tabs)');
+      } else if (result.signIn || result.signUp) {
+        // Handle cases where additional steps might be needed
+        console.log('OAuth requires additional steps');
+        setError('Please complete the sign-up process');
       }
     } catch (err: any) {
       console.error('Google sign in error:', err);
