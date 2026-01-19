@@ -49,13 +49,13 @@ export default function AdminLayout() {
                   to="/admin/openrouter-logs"
                   className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 transition-colors"
                 >
-                  API Logs
+                  OpenRouter Logs
                 </Link>
                 <Link
                   to="/admin/openrouter-usage"
                   className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 transition-colors"
                 >
-                  Usage Dashboard
+                  OpenRouter Usage
                 </Link>
               </nav>
             </div>
