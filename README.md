@@ -11,8 +11,9 @@ A production-ready full-stack SaaS template with React Router 7 (SSR), Expo Reac
 - **Clerk Authentication** - Secure user authentication out of the box
 - **Prisma ORM** - Type-safe database access
 - **Redis Caching** - High-performance caching layer
+- **Resend Email** - Eemail service for notifications using Resend API
 - **Docker Compose** - Local development with PostgreSQL and Redis
-- **Modular Service Layer** - Easy to swap providers (auth, db, cache)
+- **Modular Service Layer** - Easy to swap providers (auth, db, cache, email)
 
 ## 📁 Project Structure
 
@@ -73,7 +74,9 @@ cp web/.env.example web/.env
 cp mobile/.env.example mobile/.env
 ```
 
-Get your Clerk API keys from [clerk.com](https://clerk.com)
+Get your API keys from:
+- Clerk: [clerk.com](https://clerk.com)
+- Resend (optional, for emails): [resend.com](https://resend.com)
 
 4. **Start Docker services**
 
@@ -172,6 +175,10 @@ The web app uses a modular service layer in `web/app/services/`:
   - `cache.get()` - Get from cache
   - `cache.set()` - Set with optional TTL
   - `cache.del()` - Delete key
+
+- **`email.server.ts`** - Wraps Resend email service
+  - `sendEmail()` - Send transactional emails
+  - Template support for welcome emails, notifications, etc.
 
 This abstraction makes it easy to swap providers if needed.
 
@@ -278,6 +285,7 @@ npm run typecheck
 - [Clerk Documentation](https://clerk.com/docs)
 - [Prisma Documentation](https://www.prisma.io/docs)
 - [Redis Documentation](https://redis.io/docs)
+- [Resend Documentation](https://resend.com/docs)
 
 ## 🤝 Contributing
 
@@ -295,6 +303,7 @@ Built with amazing open-source projects:
 - Clerk
 - Prisma
 - Redis
+- Resend
 - Tailwind CSS
 - TypeScript
 

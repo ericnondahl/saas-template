@@ -1,6 +1,7 @@
 import { db } from "./db.server";
 import type { UserDTO } from "@saas-template/shared";
 import type { User as PrismaUser } from "@prisma/client";
+import { sendWelcomeEmail } from "./email.server";
 
 interface ClerkUser {
   id: string;
@@ -21,6 +22,13 @@ export async function syncUser(clerkUser: ClerkUser) {
     throw new Error("User has no email address");
   }
 
+  // Check if user exists
+  const existingUser = await db.user.findUnique({
+    where: { clerkId: clerkUser.id },
+  });
+
+  const isNewUser = !existingUser;
+
   const user = await db.user.upsert({
     where: { clerkId: clerkUser.id },
     create: {
@@ -37,6 +45,16 @@ export async function syncUser(clerkUser: ClerkUser) {
       imageUrl: clerkUser.imageUrl,
     },
   });
+
+  // Send welcome email to new users
+  if (isNewUser) {
+    try {
+      await sendWelcomeEmail(email, clerkUser.firstName);
+    } catch (error) {
+      console.error("Failed to send welcome email:", error);
+      // Don't fail user creation if email fails
+    }
+  }
 
   return user;
 }

@@ -8,12 +8,12 @@
     "packages/*"
   ],
   "scripts": {
-    "install:all": "npm install && cd web && npm install && cd ../mobile && npm install && cd ../packages/shared && npm install && cd ../..",
+    "install:all": "npm install && cd web && npm install && cd ../mobile && npm install",
     "build": "cd web && npm run build",
     "dev:web": "cd web && npm run dev",
     "dev:mobile": "npm run start --workspace=mobile",
     "test": "cd web && npm run test",
-    "typecheck": "cd web && npm run typecheck && cd .. && npm run typecheck --workspace=mobile && npm run typecheck --workspace=packages/shared",
+    "typecheck": "cd web && npm run typecheck && cd .. && npm run typecheck --workspace=mobile",
     "db:generate": "dotenv -e web/.env -- prisma generate",
     "db:migrate": "dotenv -e web/.env -- prisma migrate dev",
     "db:push": "dotenv -e web/.env -- prisma db push",

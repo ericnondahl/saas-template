@@ -7,6 +7,7 @@ Get your SaaS template up and running in 5 minutes!
 - Node.js 18+ installed
 - Docker Desktop running
 - A Clerk account (free at [clerk.com](https://clerk.com))
+- A Resend account (optional, for emails - free at [resend.com](https://resend.com))
 
 ## Quick Setup Commands
 
@@ -25,19 +26,29 @@ Copy-Item web\.env.example web\.env
 Copy-Item mobile\.env.example mobile\.env
 ```
 
-### 3. Get Clerk API Keys
+### 3. Get API Keys
 
+**Clerk (Required):**
 1. Go to [clerk.com](https://clerk.com) and sign up/sign in
 2. Create a new application
 3. Copy your Publishable Key (starts with `pk_test_`)
 4. Copy your Secret Key (starts with `sk_test_`)
 
+**Resend (Optional, for emails):**
+1. Go to [resend.com](https://resend.com) and sign up/sign in
+2. Create an API key from your dashboard
+3. Copy your API Key (starts with `re_`)
+
 ### 4. Update Environment Files
 
-Edit `web\.env` and `mobile\.env` with your Clerk keys:
+Edit `web\.env` and `mobile\.env` with your API keys:
 
-- Replace `pk_test_xxxxx` with your actual publishable key in both files
-- Replace `sk_test_xxxxx` with your actual secret key in `web\.env`
+**Required:**
+- Replace `pk_test_xxxxx` with your actual Clerk publishable key in both files
+- Replace `sk_test_xxxxx` with your actual Clerk secret key in `web\.env`
+
+**Optional (for email functionality):**
+- Add your Resend API key to `web\.env`: `RESEND_API_KEY=re_your_key_here`
 
 ### 5. Start Docker Services
 
@@ -115,6 +126,7 @@ CLERK_PUBLISHABLE_KEY=pk_test_your_key_here
 CLERK_SECRET_KEY=sk_test_your_key_here
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/saas_dev
 REDIS_URL=redis://localhost:6379
+RESEND_API_KEY=re_your_key_here  # Optional, for email functionality
 ```
 
 #### Mobile `.env` File
@@ -290,16 +302,22 @@ Common fixes:
    - Configure email templates
    - Set up webhooks
 
-2. **Extend Database Schema**
+2. **Set Up Email (Optional)**
+   - Get your Resend API key from [resend.com](https://resend.com)
+   - Add `RESEND_API_KEY` to `web/.env`
+   - Test the email service with `cd web && npx tsx scripts/test-welcome-email.ts`
+   - Customize email templates in `web/app/services/email.server.ts`
+
+3. **Extend Database Schema**
    - Edit `prisma/schema.prisma`
    - Run `npm run db:migrate` to create migrations
 
-3. **Add New Features**
+4. **Add New Features**
    - Web routes: Create files in `web/app/routes/`
    - Mobile screens: Create files in `mobile/app/`
    - Shared types: Add to `packages/shared/src/types/`
 
-4. **Deploy Your App**
+5. **Deploy Your App**
    - See deployment section in README.md
 
 ---
@@ -315,6 +333,7 @@ Common fixes:
   - [React Router Docs](https://reactrouter.com)
   - [Expo Documentation](https://docs.expo.dev)
   - [Prisma Documentation](https://www.prisma.io/docs)
+  - [Resend Documentation](https://resend.com/docs)
 
 ---
 
