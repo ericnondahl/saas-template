@@ -11,9 +11,10 @@ import {
   ScrollView,
 } from 'react-native';
 import { useRouter, Link } from 'expo-router';
-import { useSignIn, useOAuth, useAuth } from '@clerk/clerk-expo';
+import { useSignIn, useSSO, useAuth } from '@clerk/clerk-expo';
 import * as WebBrowser from 'expo-web-browser';
 import * as Linking from 'expo-linking';
+import * as AuthSession from 'expo-auth-session';
 import { Ionicons } from '@expo/vector-icons';
 
 // Required for OAuth to work properly - must be called outside component
@@ -36,7 +37,7 @@ export default function SignInScreen() {
   useWarmUpBrowser();
   
   const { signIn, setActive, isLoaded } = useSignIn();
-  const { startOAuthFlow } = useOAuth({ strategy: 'oauth_google' });
+  const { startSSOFlow } = useSSO();
   const { getToken } = useAuth();
   const router = useRouter();
 
@@ -97,10 +98,14 @@ export default function SignInScreen() {
       setIsLoading(true);
       setError(null);
       
-      const redirectUrl = Linking.createURL('oauth-callback', { scheme: 'saastemplate' });
+      const redirectUrl = AuthSession.makeRedirectUri({
+        scheme: 'saastemplate',
+        path: 'oauth-callback',
+      });
       console.log('Starting OAuth with redirect URL:', redirectUrl);
 
-      const result = await startOAuthFlow({
+      const result = await startSSOFlow({
+        strategy: 'oauth_google',
         redirectUrl,
       });
 
@@ -117,7 +122,7 @@ export default function SignInScreen() {
     } finally {
       setIsLoading(false);
     }
-  }, [startOAuthFlow, router, getToken]);
+  }, [startSSOFlow, router, getToken]);
 
   // Handle email/password sign in
   const handleEmailSignIn = async () => {
