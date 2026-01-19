@@ -1,5 +1,4 @@
-import { getAuth } from "@clerk/react-router/server";
-import { createClerkClient } from "@clerk/react-router/api.server";
+import { getAuth, createClerkClient } from "@clerk/react-router/server";
 import type { Route } from "./+types/api.sync-user";
 import { syncUser } from "../services/user.server";
 
