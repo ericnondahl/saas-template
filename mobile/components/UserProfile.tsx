@@ -26,7 +26,7 @@ export function UserProfile({ user }: UserProfileProps) {
         ) : (
           <View style={styles.avatarPlaceholder}>
             <Text style={styles.avatarText}>
-              {user.firstName?.[0] || user.email[0].toUpperCase()}
+              {user.firstName?.[0] || user.email?.[0]?.toUpperCase() || 'User'}
             </Text>
           </View>
         )}
