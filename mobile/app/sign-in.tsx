@@ -97,7 +97,7 @@ export default function SignInScreen() {
       setIsLoading(true);
       setError(null);
       
-      const redirectUrl = Linking.createURL('oauth-callback');
+      const redirectUrl = Linking.createURL('oauth-callback', { scheme: 'saastemplate' });
       console.log('Starting OAuth with redirect URL:', redirectUrl);
 
       const result = await startOAuthFlow({
