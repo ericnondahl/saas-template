@@ -54,15 +54,7 @@ npm run db:migrate
 
 When prompted for migration name: `initial_setup`
 
-### 7. Build Shared Package
-
-```powershell
-cd packages\shared
-npm run build
-cd ..\..
-```
-
-### 8. Start Development
+### 7. Start Development
 
 **Web App:**
 ```powershell
@@ -97,11 +89,6 @@ npm run docker:up
 # Database
 npm run db:generate
 npm run db:migrate
-
-# Build shared package
-cd packages\shared
-npm run build
-cd ..\..
 
 # Start web
 npm run dev:web
@@ -254,13 +241,11 @@ npm run db:generate
 
 ### Module Not Found: @saas-template/shared
 
-Build the shared package:
+The shared package uses direct source imports via tsconfig path aliases. If you see this error:
 
-```powershell
-cd packages\shared
-npm run build
-cd ..\..
-```
+1. Make sure dependencies are installed: `npm run install:all`
+2. Restart your IDE's TypeScript server
+3. Check that `web/tsconfig.json` and `mobile/tsconfig.json` have the path alias configured
 
 ### Clerk Authentication Issues
 
@@ -293,7 +278,6 @@ npm run typecheck
 ```
 
 Common fixes:
-- Rebuild shared package: `cd packages/shared && npm run build`
 - Clear cache: Delete `node_modules` and reinstall
 - Restart TypeScript server in your IDE
 

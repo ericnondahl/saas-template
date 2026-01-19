@@ -149,8 +149,9 @@ cd mobile && npm run android
 
 ### Shared Package (in `packages/shared/`)
 
-- `npm run build` - Build package
-- `npm run dev` - Watch mode
+- `npm run typecheck` - Type check shared code
+
+Note: The shared package uses direct source imports (no build step required). Changes are immediately available in web and mobile apps.
 
 ## 🏗️ Architecture
 
@@ -182,11 +183,13 @@ See `prisma/schema.prisma` for the database schema. Example models:
 
 ### Shared Types
 
-TypeScript types in `packages/shared/src/types/`:
+TypeScript types in `packages/shared/src/types/` are shared between web and mobile apps using the **internal package pattern**:
 
 - User types and DTOs
 - API response structures
 - Pagination types
+
+Both apps import the TypeScript source directly via tsconfig path aliases - no build step required. Changes are immediately reflected across all apps.
 
 ## 🔐 Authentication
 
