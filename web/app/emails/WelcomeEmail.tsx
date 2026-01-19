@@ -15,9 +15,17 @@ import * as React from "react";
 
 interface WelcomeEmailProps {
   firstName?: string;
+  email: string;
+  appUrl?: string;
 }
 
-export const WelcomeEmail = ({ firstName = "there" }: WelcomeEmailProps) => {
+export const WelcomeEmail = ({ 
+  firstName = "there", 
+  email,
+  appUrl = "http://localhost:5173" 
+}: WelcomeEmailProps) => {
+  const unsubscribeUrl = `${appUrl}/unsubscribe?email=${encodeURIComponent(email)}`;
+
   return (
     <Html>
       <Head />
@@ -77,7 +85,7 @@ export const WelcomeEmail = ({ firstName = "there" }: WelcomeEmailProps) => {
                 Contact Us
               </Link>
               {" · "}
-              <Link href="#" style={link}>
+              <Link href={unsubscribeUrl} style={link}>
                 Unsubscribe
               </Link>
             </Text>

@@ -11,7 +11,7 @@ A production-ready full-stack SaaS template with React Router 7 (SSR), Expo Reac
 - **Clerk Authentication** - Secure user authentication out of the box
 - **Prisma ORM** - Type-safe database access
 - **Redis Caching** - High-performance caching layer
-- **Resend Email** - Eemail service for notifications using Resend API
+- **Resend Email** - Eemail service for notifications using Resend API with unsubscribe
 - **Docker Compose** - Local development with PostgreSQL and Redis
 - **Modular Service Layer** - Easy to swap providers (auth, db, cache, email)
 

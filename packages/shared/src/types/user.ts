@@ -9,6 +9,7 @@ export interface User {
   lastName: string | null;
   imageUrl: string | null;
   isAdmin: boolean;
+  emailSubscribed: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -24,6 +25,7 @@ export interface UserDTO {
   lastName: string | null;
   imageUrl: string | null;
   isAdmin: boolean;
+  emailSubscribed: boolean;
 }
 
 /**
