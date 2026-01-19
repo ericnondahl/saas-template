@@ -39,7 +39,6 @@ logs/
 *.log
 
 # Prisma
-prisma/migrations/
 !prisma/migrations/.gitkeep
 
 # React Router

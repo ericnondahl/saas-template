@@ -61,6 +61,7 @@ export function userToDTO(user: PrismaUser): UserDTO {
     firstName: user.firstName,
     lastName: user.lastName,
     imageUrl: user.imageUrl,
+    isAdmin: user.isAdmin,
   };
 }
 

@@ -60,6 +60,20 @@ export function UserProfile({ user }: UserProfileProps) {
             <dt className="text-gray-600 font-medium">Last Name:</dt>
             <dd className="text-gray-900">{user.lastName || "Not set"}</dd>
           </div>
+          <div className="flex justify-between">
+            <dt className="text-gray-600 font-medium">Account Type:</dt>
+            <dd className="text-gray-900">
+              {user.isAdmin ? (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                  Admin
+                </span>
+              ) : (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                  User
+                </span>
+              )}
+            </dd>
+          </div>
         </dl>
       </div>
 

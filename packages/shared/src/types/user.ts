@@ -8,6 +8,7 @@ export interface User {
   firstName: string | null;
   lastName: string | null;
   imageUrl: string | null;
+  isAdmin: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -22,6 +23,7 @@ export interface UserDTO {
   firstName: string | null;
   lastName: string | null;
   imageUrl: string | null;
+  isAdmin: boolean;
 }
 
 /**
