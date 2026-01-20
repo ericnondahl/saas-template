@@ -9,6 +9,7 @@ Get your SaaS template up and running in 5 minutes!
 - A Clerk account (free at [clerk.com](https://clerk.com))
 - A Resend account (optional, for emails - free at [resend.com](https://resend.com))
 - An OpenRouter account (optional, for AI - free tier at [openrouter.ai](https://openrouter.ai))
+- A PostHog account (optional, for analytics - free tier at [posthog.com](https://posthog.com))
 
 ## Quick Setup Commands
 
@@ -48,6 +49,13 @@ Copy-Item mobile\.env.example mobile\.env
 2. Go to Settings > Keys and create an API key
 3. Copy your API Key (starts with `sk-or-`)
 
+**PostHog (Optional, for analytics):**
+
+1. Go to [posthog.com](https://posthog.com) and sign up/sign in
+2. Create a new project (or use your existing project)
+3. Copy your Project API Key (starts with `phc_`)
+4. Note your PostHog host URL (typically `https://us.i.posthog.com` for US or `https://eu.i.posthog.com` for EU)
+
 ### 4. Update Environment Files
 
 Edit `web\.env` and `mobile\.env` with your API keys:
@@ -64,6 +72,14 @@ Edit `web\.env` and `mobile\.env` with your API keys:
 **Optional (for AI functionality):**
 
 - Add your OpenRouter API key to `web\.env`: `OPENROUTER_API_KEY=sk-or-your_key_here`
+
+**Optional (for analytics):**
+
+- Add your PostHog keys to both `web\.env` and `mobile\.env`:
+  - `VITE_POSTHOG_KEY=phc_your_key_here` (web only)
+  - `EXPO_PUBLIC_POSTHOG_KEY=phc_your_key_here` (mobile only)
+  - `VITE_POSTHOG_HOST=https://us.i.posthog.com` (web only)
+  - `EXPO_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com` (mobile only)
 
 ### 5. Start Docker Services
 
@@ -146,6 +162,8 @@ DATABASE_URL=postgresql://postgres:postgres@localhost:5432/saas_dev
 REDIS_URL=redis://localhost:6379
 RESEND_API_KEY=re_your_key_here  # Optional, for email functionality
 OPENROUTER_API_KEY=sk-or-your_key_here  # Optional, for AI functionality
+VITE_POSTHOG_KEY=phc_your_key_here  # Optional, for analytics
+VITE_POSTHOG_HOST=https://us.i.posthog.com  # Optional, for analytics
 ```
 
 #### Mobile `.env` File
@@ -154,6 +172,8 @@ Your `mobile\.env` should contain:
 
 ```env
 EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_key_here
+EXPO_PUBLIC_POSTHOG_KEY=phc_your_key_here  # Optional, for analytics
+EXPO_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com  # Optional, for analytics
 ```
 
 **Note:** Prisma commands run from the root will automatically use `web/.env` for database connection.
@@ -381,16 +401,28 @@ Common fixes:
    - Monitor queues in the admin panel at `/admin/queues`
    - For production: run `npm run worker` as a separate service, or set `RUN_WORKER=true` to run inline
 
-5. **Extend Database Schema**
+5. **Set Up Analytics (Optional)**
+   - Get your PostHog API key from [posthog.com](https://posthog.com)
+   - Add `VITE_POSTHOG_KEY` and `VITE_POSTHOG_HOST` to `web/.env`
+   - Add `EXPO_PUBLIC_POSTHOG_KEY` and `EXPO_PUBLIC_POSTHOG_HOST` to `mobile/.env`
+   - For mobile, run `npx expo prebuild` to regenerate native projects
+   - Analytics features:
+     - Automatic pageview tracking (web)
+     - Session recording with masked password inputs
+     - User identification via Clerk
+     - Custom event tracking
+   - View analytics in your PostHog dashboard
+
+6. **Extend Database Schema**
    - Edit `prisma/schema.prisma`
    - Run `npm run db:migrate` to create migrations
 
-6. **Add New Features**
+7. **Add New Features**
    - Web routes: Create files in `web/app/routes/`
    - Mobile screens: Create files in `mobile/app/`
    - Shared types: Add to `packages/shared/src/types/`
 
-7. **Deploy Your App**
+8. **Deploy Your App**
    - See deployment section in README.md
 
 ---
@@ -409,6 +441,7 @@ Common fixes:
   - [BullMQ Documentation](https://docs.bullmq.io)
   - [OpenRouter Documentation](https://openrouter.ai/docs)
   - [Resend Documentation](https://resend.com/docs)
+  - [PostHog Documentation](https://posthog.com/docs)
 
 ---
 

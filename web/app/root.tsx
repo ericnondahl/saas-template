@@ -8,6 +8,7 @@ import {
 } from "react-router";
 import { ClerkProvider } from "@clerk/react-router";
 import { clerkMiddleware, rootAuthLoader } from "@clerk/react-router/server";
+import { PostHogProvider } from "./components/PostHogProvider";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -52,7 +53,9 @@ export async function loader(args: Route.LoaderArgs) {
 export default function App({ loaderData }: Route.ComponentProps) {
   return (
     <ClerkProvider loaderData={loaderData}>
-      <Outlet />
+      <PostHogProvider>
+        <Outlet />
+      </PostHogProvider>
     </ClerkProvider>
   );
 }

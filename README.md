@@ -14,6 +14,7 @@ A production-ready full-stack SaaS template with React Router 7 (SSR), Expo Reac
 - **BullMQ Job Queues** - Background job processing with Redis-backed queues and admin monitoring
 - **OpenRouter AI** - AI/LLM integration with 300+ models, usage tracking, and cost monitoring
 - **Resend Email** - Email service for notifications using Resend API with unsubscribe
+- **PostHog Analytics** - Product analytics and session recording for web and mobile
 - **Admin Dashboard** - Built-in admin panel with user management and AI usage analytics
 - **Docker Compose** - Local development with PostgreSQL and Redis
 - **Modular Service Layer** - Easy to swap providers (auth, db, cache, email, AI)
@@ -81,6 +82,7 @@ Get your API keys from:
 
 - Clerk: [clerk.com](https://clerk.com)
 - Resend (optional, for emails): [resend.com](https://resend.com)
+- PostHog (optional, for analytics): [posthog.com](https://posthog.com)
 
 4. **Start Docker services**
 
@@ -200,6 +202,17 @@ The web app uses a modular service layer in `web/app/services/`:
   - Flexible deployment: run inline with web server or as separate process
 
 This abstraction makes it easy to swap providers if needed.
+
+### Analytics
+
+PostHog is integrated for product analytics and session recording on both web and mobile:
+
+- **Web**: Automatic pageview tracking, user identification via Clerk, and session replay
+- **Mobile**: Event tracking, user identification, and mobile session replay
+- **Privacy**: Password inputs are masked by default in session recordings
+- **Custom Events**: Track custom events with `posthog.capture()` (web) or `usePostHog().capture()` (mobile)
+
+Both platforms automatically identify users when signed in via Clerk.
 
 ### Admin Panel
 
@@ -373,6 +386,7 @@ npm run typecheck
 - [BullMQ Documentation](https://docs.bullmq.io)
 - [OpenRouter Documentation](https://openrouter.ai/docs)
 - [Resend Documentation](https://resend.com/docs)
+- [PostHog Documentation](https://posthog.com/docs)
 
 ## 🤝 Contributing
 
@@ -394,6 +408,7 @@ Built with amazing open-source projects:
 - BullMQ
 - OpenRouter
 - Resend
+- PostHog
 - Recharts
 - Tailwind CSS
 - TypeScript
