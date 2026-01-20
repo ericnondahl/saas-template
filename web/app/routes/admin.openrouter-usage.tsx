@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { DollarSign, Activity, Zap } from "lucide-react";
 import type { ApiResponse } from "@saas-template/shared";
 import {
   LineChart,
@@ -12,6 +13,24 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Badge,
+  Button,
+  Alert,
+  AlertDescription,
+  Skeleton,
+} from "~/components/ui";
 
 interface DailyUsage {
   date: string;
@@ -85,17 +104,37 @@ export default function OpenRouterUsagePage() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow p-8">
-        <p className="text-center text-gray-600">Loading usage data...</p>
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <Skeleton className="h-8 w-72" />
+            <Skeleton className="h-4 w-96 mt-2" />
+          </div>
+          <div className="flex gap-2">
+            {[7, 30, 90].map((p) => (
+              <Skeleton key={p} className="h-9 w-14" />
+            ))}
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[...Array(3)].map((_, i) => (
+            <Card key={i}>
+              <CardHeader>
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-8 w-32 mt-2" />
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <p className="text-red-900">Error: {error}</p>
-      </div>
+      <Alert variant="destructive">
+        <AlertDescription>Error: {error}</AlertDescription>
+      </Alert>
     );
   }
 
@@ -112,163 +151,212 @@ export default function OpenRouterUsagePage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">OpenRouter Usage Dashboard</h1>
-          <p className="text-gray-600 mt-2">Monitor API usage and costs over time</p>
+          <h1 className="text-3xl font-bold text-foreground">
+            OpenRouter Usage Dashboard
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            Monitor API usage and costs over time
+          </p>
         </div>
 
         {/* Time Period Selector */}
-        <div className="flex space-x-2">
+        <div className="flex gap-1">
           {([7, 30, 90] as TimePeriod[]).map((period) => (
-            <button
+            <Button
               key={period}
+              variant={days === period ? "default" : "outline"}
+              size="sm"
               onClick={() => setDays(period)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                days === period
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
             >
               {period}d
-            </button>
+            </Button>
           ))}
         </div>
       </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">Total Cost</h3>
-          <p className="mt-2 text-3xl font-bold text-gray-900">{formatCost(summary.totalCost)}</p>
-          <p className="mt-1 text-sm text-gray-500">Last {days} days</p>
-        </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total Cost
+            </CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-foreground">
+              {formatCost(summary.totalCost)}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">Last {days} days</p>
+          </CardContent>
+        </Card>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
-            Total API Calls
-          </h3>
-          <p className="mt-2 text-3xl font-bold text-gray-900">
-            {formatNumber(summary.totalCalls)}
-          </p>
-          <p className="mt-1 text-sm text-gray-500">Last {days} days</p>
-        </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total API Calls
+            </CardTitle>
+            <Activity className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-foreground">
+              {formatNumber(summary.totalCalls)}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">Last {days} days</p>
+          </CardContent>
+        </Card>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
-            Total Tokens
-          </h3>
-          <p className="mt-2 text-3xl font-bold text-gray-900">
-            {formatNumber(summary.totalTokens)}
-          </p>
-          <p className="mt-1 text-sm text-gray-500">Last {days} days</p>
-        </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total Tokens
+            </CardTitle>
+            <Zap className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-foreground">
+              {formatNumber(summary.totalTokens)}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">Last {days} days</p>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Charts */}
       {chartData.length > 0 ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Cost Over Time */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Cost Over Time</h3>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="dateLabel" tick={{ fontSize: 12 }} />
-                  <YAxis
-                    tick={{ fontSize: 12 }}
-                    tickFormatter={(value) => `$${value.toFixed(4)}`}
-                  />
-                  <Tooltip
-                    formatter={(value) => [formatCost(value as number), "Cost"]}
-                    labelFormatter={(label) => `Date: ${label}`}
-                  />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="totalCost"
-                    stroke="#3B82F6"
-                    strokeWidth={2}
-                    dot={{ fill: "#3B82F6" }}
-                    name="Cost"
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Cost Over Time</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                    <XAxis
+                      dataKey="dateLabel"
+                      tick={{ fontSize: 12 }}
+                      className="text-muted-foreground"
+                    />
+                    <YAxis
+                      tick={{ fontSize: 12 }}
+                      tickFormatter={(value) => `$${value.toFixed(4)}`}
+                      className="text-muted-foreground"
+                    />
+                    <Tooltip
+                      formatter={(value) => [formatCost(value as number), "Cost"]}
+                      labelFormatter={(label) => `Date: ${label}`}
+                      contentStyle={{
+                        backgroundColor: "hsl(var(--card))",
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "0.5rem",
+                      }}
+                    />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="totalCost"
+                      stroke="hsl(var(--foreground))"
+                      strokeWidth={2}
+                      dot={{ fill: "hsl(var(--foreground))" }}
+                      name="Cost"
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Daily Call Volume */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Daily API Calls</h3>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="dateLabel" tick={{ fontSize: 12 }} />
-                  <YAxis tick={{ fontSize: 12 }} />
-                  <Tooltip
-                    formatter={(value) => [formatNumber(value as number), "Calls"]}
-                    labelFormatter={(label) => `Date: ${label}`}
-                  />
-                  <Legend />
-                  <Bar dataKey="calls" fill="#10B981" name="API Calls" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Daily API Calls</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                    <XAxis
+                      dataKey="dateLabel"
+                      tick={{ fontSize: 12 }}
+                      className="text-muted-foreground"
+                    />
+                    <YAxis tick={{ fontSize: 12 }} className="text-muted-foreground" />
+                    <Tooltip
+                      formatter={(value) => [formatNumber(value as number), "Calls"]}
+                      labelFormatter={(label) => `Date: ${label}`}
+                      contentStyle={{
+                        backgroundColor: "hsl(var(--card))",
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "0.5rem",
+                      }}
+                    />
+                    <Legend />
+                    <Bar
+                      dataKey="calls"
+                      fill="hsl(var(--primary))"
+                      name="API Calls"
+                      radius={[4, 4, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow p-8 text-center">
-          <p className="text-gray-500">No usage data available for the selected period</p>
-        </div>
+        <Card>
+          <CardContent className="py-12 text-center">
+            <p className="text-muted-foreground">
+              No usage data available for the selected period
+            </p>
+          </CardContent>
+        </Card>
       )}
 
       {/* Model Usage Table */}
       {summary.modelUsage.length > 0 && (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Usage by Model</h3>
-          </div>
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Model
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Calls
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Tokens
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Cost
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+        <Card>
+          <CardHeader>
+            <CardTitle>Usage by Model</CardTitle>
+            <CardDescription>
+              Breakdown of API usage across different models
+            </CardDescription>
+          </CardHeader>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Model</TableHead>
+                <TableHead className="text-right">Calls</TableHead>
+                <TableHead className="text-right">Tokens</TableHead>
+                <TableHead className="text-right">Cost</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {summary.modelUsage.map((model) => (
-                <tr key={model.model} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded">
-                      {model.model}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <TableRow key={model.model}>
+                  <TableCell>
+                    <Badge variant="secondary">{model.model}</Badge>
+                  </TableCell>
+                  <TableCell className="text-right text-foreground">
                     {formatNumber(model.calls)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  </TableCell>
+                  <TableCell className="text-right text-foreground">
                     {formatNumber(model.totalTokens)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  </TableCell>
+                  <TableCell className="text-right font-medium text-foreground">
                     {formatCost(model.totalCost)}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </TableBody>
+          </Table>
+        </Card>
       )}
     </div>
   );

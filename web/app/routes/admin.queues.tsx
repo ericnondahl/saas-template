@@ -1,5 +1,26 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
+import { RefreshCw, ChevronDown, ChevronRight } from "lucide-react";
 import type { ApiResponse } from "@saas-template/shared";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Badge,
+  Button,
+  Select,
+  Label,
+  Alert,
+  AlertDescription,
+  Skeleton,
+} from "~/components/ui";
+import { cn } from "~/lib/utils";
 
 interface QueueSummary {
   name: string;
@@ -28,13 +49,13 @@ interface JobDetail {
 
 type JobStatus = "waiting" | "active" | "completed" | "failed" | "delayed" | "paused" | "all";
 
-const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
-  waiting: { bg: "bg-gray-100", text: "text-gray-800" },
-  active: { bg: "bg-yellow-100", text: "text-yellow-800" },
-  completed: { bg: "bg-green-100", text: "text-green-800" },
-  failed: { bg: "bg-red-100", text: "text-red-800" },
-  delayed: { bg: "bg-blue-100", text: "text-blue-800" },
-  paused: { bg: "bg-purple-100", text: "text-purple-800" },
+const STATUS_VARIANTS: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+  waiting: "secondary",
+  active: "outline",
+  completed: "default",
+  failed: "destructive",
+  delayed: "secondary",
+  paused: "secondary",
 };
 
 export default function QueuesPage() {
@@ -123,87 +144,124 @@ export default function QueuesPage() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow p-8">
-        <p className="text-center text-gray-600">Loading queues...</p>
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <Skeleton className="h-8 w-40" />
+            <Skeleton className="h-4 w-64 mt-2" />
+          </div>
+          <Skeleton className="h-9 w-24" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[...Array(3)].map((_, i) => (
+            <Card key={i}>
+              <CardHeader>
+                <Skeleton className="h-6 w-32" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-4 w-24" />
+                <div className="flex gap-2 mt-3">
+                  {[...Array(4)].map((_, j) => (
+                    <Skeleton key={j} className="h-6 w-16" />
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <p className="text-red-900">Error: {error}</p>
-      </div>
+      <Alert variant="destructive">
+        <AlertDescription>Error: {error}</AlertDescription>
+      </Alert>
     );
   }
 
   return (
-    <div>
-      <div className="mb-6 flex justify-between items-center">
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Job Queues</h1>
-          <p className="text-gray-600 mt-2">Monitor BullMQ job queues and their status</p>
+          <h1 className="text-3xl font-bold text-foreground">Job Queues</h1>
+          <p className="text-muted-foreground mt-2">
+            Monitor BullMQ job queues and their status
+          </p>
         </div>
-        <button
-          onClick={handleRefresh}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-        >
+        <Button onClick={handleRefresh} variant="outline">
+          <RefreshCw className="h-4 w-4" />
           Refresh
-        </button>
+        </Button>
       </div>
 
       {/* Queue Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {queues.map((queue) => (
-          <div
+          <Card
             key={queue.name}
+            className={cn(
+              "cursor-pointer transition-all hover:shadow-md",
+              selectedQueue === queue.name && "ring-2 ring-ring"
+            )}
             onClick={() => {
               setSelectedQueue(queue.name);
               setSelectedStatus("all");
               setExpandedJobId(null);
             }}
-            className={`bg-white rounded-lg shadow p-4 cursor-pointer transition-all hover:shadow-md ${
-              selectedQueue === queue.name ? "ring-2 ring-blue-500" : ""
-            }`}
           >
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">{queue.name}</h3>
-            <div className="text-sm text-gray-600 mb-3">
-              Total Jobs: <span className="font-medium">{getTotalJobs(queue.counts)}</span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {Object.entries(queue.counts).map(([status, count]) => (
-                <span
-                  key={status}
-                  className={`px-2 py-1 text-xs font-medium rounded ${STATUS_COLORS[status]?.bg || "bg-gray-100"} ${STATUS_COLORS[status]?.text || "text-gray-800"}`}
-                >
-                  {status}: {count}
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">{queue.name}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-sm text-muted-foreground mb-3">
+                Total Jobs:{" "}
+                <span className="font-medium text-foreground">
+                  {getTotalJobs(queue.counts)}
                 </span>
-              ))}
-            </div>
-          </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(queue.counts).map(([status, count]) => {
+                  // Only show destructive variant for failed if count > 0
+                  const variant =
+                    status === "failed" && count === 0
+                      ? "secondary"
+                      : STATUS_VARIANTS[status] || "secondary";
+                  return (
+                    <Badge key={status} variant={variant} className="text-xs">
+                      {status}: {count}
+                    </Badge>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
       {queues.length === 0 && (
-        <div className="bg-white rounded-lg shadow p-8 text-center">
-          <p className="text-gray-500">No queues registered</p>
-        </div>
+        <Card>
+          <CardContent className="py-12 text-center">
+            <p className="text-muted-foreground">No queues registered</p>
+          </CardContent>
+        </Card>
       )}
 
       {/* Job Details Section */}
       {selectedQueue && (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-200 flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-gray-900">Jobs in {selectedQueue}</h2>
-            <div className="flex items-center gap-2">
-              <label htmlFor="status-filter" className="text-sm text-gray-600">
-                Filter by status:
-              </label>
-              <select
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardTitle>Jobs in {selectedQueue}</CardTitle>
+            <div className="flex items-center gap-3">
+              <Label htmlFor="status-filter" className="text-sm text-muted-foreground">
+                Filter:
+              </Label>
+              <Select
                 id="status-filter"
                 value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value as JobStatus)}
-                className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onValueChange={(value) => setSelectedStatus(value as JobStatus)}
+                className="w-36"
               >
                 <option value="all">All</option>
                 <option value="waiting">Waiting</option>
@@ -212,129 +270,130 @@ export default function QueuesPage() {
                 <option value="failed">Failed</option>
                 <option value="delayed">Delayed</option>
                 <option value="paused">Paused</option>
-              </select>
+              </Select>
             </div>
-          </div>
+          </CardHeader>
 
           {jobsLoading ? (
-            <div className="p-8 text-center text-gray-600">Loading jobs...</div>
+            <CardContent className="py-8 text-center text-muted-foreground">
+              Loading jobs...
+            </CardContent>
           ) : jobs.length === 0 ? (
-            <div className="p-8 text-center text-gray-500">No jobs found</div>
+            <CardContent className="py-8 text-center text-muted-foreground">
+              No jobs found
+            </CardContent>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      ID
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Created
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Attempts
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {jobs.map((job) => (
-                    <>
-                      <tr
-                        key={job.id}
-                        className="hover:bg-gray-50 cursor-pointer"
-                        onClick={() => setExpandedJobId(expandedJobId === job.id ? null : job.id)}
-                      >
-                        <td className="px-4 py-3 whitespace-nowrap text-sm font-mono text-gray-900">
-                          {job.id}
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
-                          {job.name}
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <span
-                            className={`px-2 py-1 text-xs font-medium rounded ${STATUS_COLORS[job.status]?.bg || "bg-gray-100"} ${STATUS_COLORS[job.status]?.text || "text-gray-800"}`}
-                          >
-                            {job.status}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
-                          {formatDate(job.timestamp)}
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
-                          {job.attemptsMade}
-                        </td>
-                      </tr>
-                      {expandedJobId === job.id && (
-                        <tr key={`${job.id}-expanded`}>
-                          <td colSpan={5} className="px-4 py-4 bg-gray-50">
-                            <div className="space-y-4">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-8"></TableHead>
+                  <TableHead>ID</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead className="text-right">Attempts</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {jobs.map((job) => (
+                  <Fragment key={job.id}>
+                    <TableRow
+                      className="cursor-pointer"
+                      onClick={() =>
+                        setExpandedJobId(expandedJobId === job.id ? null : job.id)
+                      }
+                    >
+                      <TableCell className="w-8">
+                        {expandedJobId === job.id ? (
+                          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        )}
+                      </TableCell>
+                      <TableCell className="font-mono text-foreground">
+                        {job.id}
+                      </TableCell>
+                      <TableCell className="text-foreground">{job.name}</TableCell>
+                      <TableCell>
+                        <Badge variant={STATUS_VARIANTS[job.status] || "secondary"}>
+                          {job.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {formatDate(job.timestamp)}
+                      </TableCell>
+                      <TableCell className="text-right text-muted-foreground">
+                        {job.attemptsMade}
+                      </TableCell>
+                    </TableRow>
+                    {expandedJobId === job.id && (
+                      <TableRow>
+                        <TableCell colSpan={6} className="bg-muted/50 p-4">
+                          <div className="space-y-4">
+                            <div>
+                              <h4 className="text-sm font-medium text-foreground mb-2">
+                                Job Data:
+                              </h4>
+                              <pre className="text-sm text-muted-foreground bg-background p-3 rounded-md border border-border whitespace-pre-wrap max-h-48 overflow-y-auto">
+                                {JSON.stringify(job.data, null, 2)}
+                              </pre>
+                            </div>
+                            {job.failedReason && (
                               <div>
-                                <h4 className="text-sm font-medium text-gray-700 mb-2">
-                                  Job Data:
+                                <h4 className="text-sm font-medium text-destructive mb-2">
+                                  Error:
                                 </h4>
-                                <pre className="text-sm text-gray-600 bg-white p-3 rounded border whitespace-pre-wrap max-h-48 overflow-y-auto">
-                                  {JSON.stringify(job.data, null, 2)}
+                                <pre className="text-sm text-destructive bg-destructive/10 p-3 rounded-md border border-destructive/20 whitespace-pre-wrap max-h-48 overflow-y-auto">
+                                  {job.failedReason}
                                 </pre>
                               </div>
-                              {job.failedReason && (
+                            )}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                              <div>
+                                <span className="text-muted-foreground">Created:</span>{" "}
+                                <span className="font-medium text-foreground">
+                                  {formatDate(job.timestamp)}
+                                </span>
+                              </div>
+                              {job.processedOn && (
                                 <div>
-                                  <h4 className="text-sm font-medium text-red-700 mb-2">Error:</h4>
-                                  <pre className="text-sm text-red-600 bg-red-50 p-3 rounded border border-red-200 whitespace-pre-wrap max-h-48 overflow-y-auto">
-                                    {job.failedReason}
-                                  </pre>
-                                </div>
-                              )}
-                              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                                <div>
-                                  <span className="text-gray-500">Created:</span>{" "}
-                                  <span className="font-medium">{formatDate(job.timestamp)}</span>
-                                </div>
-                                {job.processedOn && (
-                                  <div>
-                                    <span className="text-gray-500">Processed:</span>{" "}
-                                    <span className="font-medium">
-                                      {formatDate(job.processedOn)}
-                                    </span>
-                                  </div>
-                                )}
-                                {job.finishedOn && (
-                                  <div>
-                                    <span className="text-gray-500">Finished:</span>{" "}
-                                    <span className="font-medium">
-                                      {formatDate(job.finishedOn)}
-                                    </span>
-                                  </div>
-                                )}
-                                <div>
-                                  <span className="text-gray-500">Progress:</span>{" "}
-                                  <span className="font-medium">
-                                    {typeof job.progress === "number"
-                                      ? `${job.progress}%`
-                                      : typeof job.progress === "string"
-                                        ? job.progress
-                                        : typeof job.progress === "boolean"
-                                          ? String(job.progress)
-                                          : JSON.stringify(job.progress)}
+                                  <span className="text-muted-foreground">Processed:</span>{" "}
+                                  <span className="font-medium text-foreground">
+                                    {formatDate(job.processedOn)}
                                   </span>
                                 </div>
+                              )}
+                              {job.finishedOn && (
+                                <div>
+                                  <span className="text-muted-foreground">Finished:</span>{" "}
+                                  <span className="font-medium text-foreground">
+                                    {formatDate(job.finishedOn)}
+                                  </span>
+                                </div>
+                              )}
+                              <div>
+                                <span className="text-muted-foreground">Progress:</span>{" "}
+                                <span className="font-medium text-foreground">
+                                  {typeof job.progress === "number"
+                                    ? `${job.progress}%`
+                                    : typeof job.progress === "string"
+                                      ? job.progress
+                                      : typeof job.progress === "boolean"
+                                        ? String(job.progress)
+                                        : JSON.stringify(job.progress)}
+                                </span>
                               </div>
                             </div>
-                          </td>
-                        </tr>
-                      )}
-                    </>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </Fragment>
+                ))}
+              </TableBody>
+            </Table>
           )}
-        </div>
+        </Card>
       )}
     </div>
   );

@@ -1,5 +1,24 @@
 import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 import type { ApiResponse } from "@saas-template/shared";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Switch,
+  Badge,
+  Alert,
+  AlertDescription,
+  Skeleton,
+} from "~/components/ui";
 
 interface AdminUser {
   id: string;
@@ -76,116 +95,93 @@ export default function AdminsPage() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow p-8">
-        <p className="text-center text-gray-600">Loading users...</p>
-      </div>
+      <Card>
+        <CardHeader>
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-4 w-72 mt-2" />
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="flex items-center gap-4">
+              <Skeleton className="h-10 w-48" />
+              <Skeleton className="h-10 w-48" />
+              <Skeleton className="h-6 w-16" />
+            </div>
+          ))}
+        </CardContent>
+      </Card>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <p className="text-red-900">Error: {error}</p>
-      </div>
+      <Alert variant="destructive">
+        <AlertDescription>Error: {error}</AlertDescription>
+      </Alert>
     );
   }
 
   return (
-    <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Admin Management</h1>
-        <p className="text-gray-600 mt-2">Manage admin privileges for users in the system</p>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-foreground">Admin Management</h1>
+        <p className="text-muted-foreground mt-2">
+          Manage admin privileges for users in the system
+        </p>
       </div>
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                User
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Email
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Admin
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+      <Card>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>User</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead className="text-right">Admin</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {users.map((user) => (
-              <tr key={user.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
+              <TableRow key={user.id}>
+                <TableCell>
+                  <div className="font-medium text-foreground">
                     {user.firstName && user.lastName
                       ? `${user.firstName} ${user.lastName}`
                       : user.firstName || "N/A"}
                   </div>
-                  <div className="text-sm text-gray-500">{user.id.slice(0, 12)}...</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{user.email}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <label className="flex items-center cursor-pointer">
-                    <div className="relative">
-                      <input
-                        type="checkbox"
-                        checked={user.isAdmin}
-                        onChange={(e) => handleToggleAdmin(user.id, e.target.checked)}
-                        disabled={updatingUserId === user.id}
-                        className="sr-only"
-                      />
-                      <div
-                        className={`block w-14 h-8 rounded-full transition-colors ${
-                          user.isAdmin ? "bg-blue-600" : "bg-gray-300"
-                        } ${updatingUserId === user.id ? "opacity-50 cursor-not-allowed" : ""}`}
-                      ></div>
-                      <div
-                        className={`absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform ${
-                          user.isAdmin ? "transform translate-x-6" : ""
-                        } ${updatingUserId === user.id ? "flex items-center justify-center" : ""}`}
-                      >
-                        {updatingUserId === user.id && (
-                          <svg
-                            className="animate-spin h-4 w-4 text-blue-600"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                            ></circle>
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            ></path>
-                          </svg>
-                        )}
-                      </div>
-                    </div>
-                    <span className="ml-3 text-sm text-gray-700">
-                      {user.isAdmin ? "Admin" : "User"}
-                    </span>
-                  </label>
-                </td>
-              </tr>
+                  <div className="text-sm text-muted-foreground font-mono">
+                    {user.id.slice(0, 12)}...
+                  </div>
+                </TableCell>
+                <TableCell className="text-foreground">{user.email}</TableCell>
+                <TableCell>
+                  <Badge variant={user.isAdmin ? "default" : "secondary"}>
+                    {user.isAdmin ? "Admin" : "User"}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex items-center justify-end gap-2">
+                    {updatingUserId === user.id && (
+                      <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                    )}
+                    <Switch
+                      checked={user.isAdmin}
+                      onCheckedChange={(checked) => handleToggleAdmin(user.id, checked)}
+                      disabled={updatingUserId === user.id}
+                    />
+                  </div>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
 
         {users.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500">No users found</p>
+            <p className="text-muted-foreground">No users found</p>
           </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 }
