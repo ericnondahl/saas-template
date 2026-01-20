@@ -82,9 +82,7 @@ export default function OpenRouterLogsPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900">OpenRouter API Logs</h1>
-        <p className="text-gray-600 mt-2">
-          View the most recent 50 API calls to OpenRouter
-        </p>
+        <p className="text-gray-600 mt-2">View the most recent 50 API calls to OpenRouter</p>
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -118,9 +116,7 @@ export default function OpenRouterLogsPage() {
                   <tr
                     key={log.id}
                     className="hover:bg-gray-50 cursor-pointer"
-                    onClick={() =>
-                      setExpandedId(expandedId === log.id ? null : log.id)
-                    }
+                    onClick={() => setExpandedId(expandedId === log.id ? null : log.id)}
                   >
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                       {formatDate(log.createdAt)}
@@ -156,17 +152,13 @@ export default function OpenRouterLogsPage() {
                       <td colSpan={6} className="px-4 py-4 bg-gray-50">
                         <div className="space-y-4">
                           <div>
-                            <h4 className="text-sm font-medium text-gray-700 mb-2">
-                              Full Input:
-                            </h4>
+                            <h4 className="text-sm font-medium text-gray-700 mb-2">Full Input:</h4>
                             <pre className="text-sm text-gray-600 bg-white p-3 rounded border whitespace-pre-wrap max-h-48 overflow-y-auto">
                               {log.inputText}
                             </pre>
                           </div>
                           <div>
-                            <h4 className="text-sm font-medium text-gray-700 mb-2">
-                              Full Output:
-                            </h4>
+                            <h4 className="text-sm font-medium text-gray-700 mb-2">Full Output:</h4>
                             <pre className="text-sm text-gray-600 bg-white p-3 rounded border whitespace-pre-wrap max-h-48 overflow-y-auto">
                               {log.outputText}
                             </pre>
@@ -174,21 +166,15 @@ export default function OpenRouterLogsPage() {
                           <div className="grid grid-cols-3 gap-4 text-sm">
                             <div>
                               <span className="text-gray-500">Input Cost:</span>{" "}
-                              <span className="font-medium">
-                                {formatCost(log.inputCost)}
-                              </span>
+                              <span className="font-medium">{formatCost(log.inputCost)}</span>
                             </div>
                             <div>
                               <span className="text-gray-500">Output Cost:</span>{" "}
-                              <span className="font-medium">
-                                {formatCost(log.outputCost)}
-                              </span>
+                              <span className="font-medium">{formatCost(log.outputCost)}</span>
                             </div>
                             <div>
                               <span className="text-gray-500">Total Cost:</span>{" "}
-                              <span className="font-medium">
-                                {formatCost(log.totalCost)}
-                              </span>
+                              <span className="font-medium">{formatCost(log.totalCost)}</span>
                             </div>
                           </div>
                         </div>

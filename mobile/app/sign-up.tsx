@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   View,
   Text,
@@ -9,25 +9,25 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-} from 'react-native';
-import { useRouter, Link } from 'expo-router';
-import { useSignUp, useAuth } from '@clerk/clerk-expo';
-import { Ionicons } from '@expo/vector-icons';
+} from "react-native";
+import { useRouter, Link } from "expo-router";
+import { useSignUp, useAuth } from "@clerk/clerk-expo";
+import { Ionicons } from "@expo/vector-icons";
 
 // API URL for syncing user to database
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000";
 
 export default function SignUpScreen() {
   const { signUp, setActive, isLoaded } = useSignUp();
   const { getToken } = useAuth();
   const router = useRouter();
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [verificationCode, setVerificationCode] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pendingVerification, setPendingVerification] = useState(false);
@@ -37,26 +37,26 @@ export default function SignUpScreen() {
     try {
       const token = await getToken();
       if (!token) {
-        console.warn('No token available for sync');
+        console.warn("No token available for sync");
         return;
       }
 
       const response = await fetch(`${API_URL}/api/sync-user`, {
-        method: 'POST',
+        method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
       if (!response.ok) {
-        console.warn('Failed to sync user:', response.status);
+        console.warn("Failed to sync user:", response.status);
       } else {
-        console.log('User synced to database');
+        console.log("User synced to database");
       }
     } catch (err) {
       // Don't block sign-up if sync fails
-      console.warn('Error syncing user:', err);
+      console.warn("Error syncing user:", err);
     }
   };
 
@@ -65,17 +65,17 @@ export default function SignUpScreen() {
     if (!isLoaded) return;
 
     if (!email || !password) {
-      setError('Please enter your email and password');
+      setError("Please enter your email and password");
       return;
     }
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return;
     }
 
     if (password.length < 8) {
-      setError('Password must be at least 8 characters');
+      setError("Password must be at least 8 characters");
       return;
     }
 
@@ -91,12 +91,12 @@ export default function SignUpScreen() {
       });
 
       // Send email verification code
-      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
 
       setPendingVerification(true);
     } catch (err: any) {
-      console.error('Sign up error:', err);
-      setError(err.errors?.[0]?.message || 'Failed to create account');
+      console.error("Sign up error:", err);
+      setError(err.errors?.[0]?.message || "Failed to create account");
     } finally {
       setIsLoading(false);
     }
@@ -107,7 +107,7 @@ export default function SignUpScreen() {
     if (!isLoaded) return;
 
     if (!verificationCode) {
-      setError('Please enter the verification code');
+      setError("Please enter the verification code");
       return;
     }
 
@@ -119,18 +119,18 @@ export default function SignUpScreen() {
         code: verificationCode,
       });
 
-      if (result.status === 'complete') {
+      if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
         // Sync user to database after successful verification
         await syncUserToDatabase();
-        router.replace('/(tabs)');
+        router.replace("/(tabs)");
       } else {
-        console.log('Verification result:', result);
-        setError('Verification incomplete. Please try again.');
+        console.log("Verification result:", result);
+        setError("Verification incomplete. Please try again.");
       }
     } catch (err: any) {
-      console.error('Verification error:', err);
-      setError(err.errors?.[0]?.message || 'Invalid verification code');
+      console.error("Verification error:", err);
+      setError(err.errors?.[0]?.message || "Invalid verification code");
     } finally {
       setIsLoading(false);
     }
@@ -143,11 +143,11 @@ export default function SignUpScreen() {
     try {
       setIsLoading(true);
       setError(null);
-      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
       setError(null);
     } catch (err: any) {
-      console.error('Resend error:', err);
-      setError(err.errors?.[0]?.message || 'Failed to resend code');
+      console.error("Resend error:", err);
+      setError(err.errors?.[0]?.message || "Failed to resend code");
     } finally {
       setIsLoading(false);
     }
@@ -158,7 +158,7 @@ export default function SignUpScreen() {
     return (
       <KeyboardAvoidingView
         style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <ScrollView
           contentContainerStyle={styles.scrollContent}
@@ -170,7 +170,7 @@ export default function SignUpScreen() {
             </View>
             <Text style={styles.title}>Check Your Email</Text>
             <Text style={styles.subtitle}>
-              We sent a verification code to{'\n'}
+              We sent a verification code to{"\n"}
               <Text style={styles.emailHighlight}>{email}</Text>
             </Text>
 
@@ -207,18 +207,11 @@ export default function SignUpScreen() {
               )}
             </Pressable>
 
-            <Pressable
-              style={styles.resendButton}
-              onPress={handleResendCode}
-              disabled={isLoading}
-            >
+            <Pressable style={styles.resendButton} onPress={handleResendCode} disabled={isLoading}>
               <Text style={styles.resendButtonText}>Resend Code</Text>
             </Pressable>
 
-            <Pressable
-              style={styles.backButton}
-              onPress={() => setPendingVerification(false)}
-            >
+            <Pressable style={styles.backButton} onPress={() => setPendingVerification(false)}>
               <Ionicons name="arrow-back" size={16} color="#6b7280" />
               <Text style={styles.backButtonText}>Back to Sign Up</Text>
             </Pressable>
@@ -232,12 +225,9 @@ export default function SignUpScreen() {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.content}>
           <Text style={styles.title}>Create Account</Text>
           <Text style={styles.subtitle}>Sign up to get started</Text>
@@ -356,55 +346,55 @@ export default function SignUpScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: "#f9fafb",
   },
   scrollContent: {
     flexGrow: 1,
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingHorizontal: 24,
     paddingVertical: 32,
   },
   iconContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 24,
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#111827',
-    textAlign: 'center',
+    fontWeight: "bold",
+    color: "#111827",
+    textAlign: "center",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#6b7280',
-    textAlign: 'center',
+    color: "#6b7280",
+    textAlign: "center",
     marginBottom: 32,
     lineHeight: 24,
   },
   emailHighlight: {
-    color: '#3b82f6',
-    fontWeight: '600',
+    color: "#3b82f6",
+    fontWeight: "600",
   },
   errorContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fef2f2',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fef2f2",
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,
     gap: 8,
   },
   errorText: {
-    color: '#dc2626',
+    color: "#dc2626",
     fontSize: 14,
     flex: 1,
   },
   nameRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
   },
   nameInput: {
@@ -415,80 +405,80 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 14,
-    fontWeight: '500',
-    color: '#374151',
+    fontWeight: "500",
+    color: "#374151",
     marginBottom: 6,
   },
   input: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: "#d1d5db",
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 16,
-    color: '#111827',
+    color: "#111827",
   },
   signUpButton: {
-    backgroundColor: '#3b82f6',
+    backgroundColor: "#3b82f6",
     paddingVertical: 14,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 8,
   },
   signUpButtonText: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   verifyButton: {
-    backgroundColor: '#3b82f6',
+    backgroundColor: "#3b82f6",
     paddingVertical: 14,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 8,
   },
   verifyButtonText: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   buttonDisabled: {
     opacity: 0.6,
   },
   resendButton: {
     paddingVertical: 14,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 8,
   },
   resendButtonText: {
-    color: '#3b82f6',
+    color: "#3b82f6",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 8,
     marginTop: 24,
   },
   backButtonText: {
-    color: '#6b7280',
+    color: "#6b7280",
     fontSize: 14,
   },
   signInContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     marginTop: 24,
   },
   signInText: {
-    color: '#6b7280',
+    color: "#6b7280",
     fontSize: 14,
   },
   signInLink: {
-    color: '#3b82f6',
+    color: "#3b82f6",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });

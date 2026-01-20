@@ -1,19 +1,19 @@
-const { withGradleProperties, withProjectBuildGradle } = require('@expo/config-plugins');
+const { withGradleProperties, withProjectBuildGradle } = require("@expo/config-plugins");
 
 /**
  * Expo config plugin to set the Kotlin version for Android builds.
  * This is needed to ensure compatibility between Kotlin and Compose Compiler.
  */
-const withKotlinVersion = (config, { kotlinVersion = '1.9.25' } = {}) => {
+const withKotlinVersion = (config, { kotlinVersion = "1.9.25" } = {}) => {
   // Add kotlin version to gradle.properties
   config = withGradleProperties(config, (config) => {
     config.modResults = config.modResults.filter(
-      (item) => !(item.type === 'property' && item.key === 'android.kotlinVersion')
+      (item) => !(item.type === "property" && item.key === "android.kotlinVersion")
     );
 
     config.modResults.push({
-      type: 'property',
-      key: 'android.kotlinVersion',
+      type: "property",
+      key: "android.kotlinVersion",
       value: kotlinVersion,
     });
 

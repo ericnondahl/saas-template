@@ -63,8 +63,7 @@ async function getModelPricing(modelId: string): Promise<ModelPricing | null> {
 
     // Find the specific model
     const model = response.data?.find(
-      (m: { id?: string; pricing?: { prompt?: string; completion?: string } }) =>
-        m.id === modelId
+      (m: { id?: string; pricing?: { prompt?: string; completion?: string } }) => m.id === modelId
     );
     if (!model || !model.pricing) {
       console.warn(`Model pricing not found for: ${modelId}`);
@@ -171,9 +170,7 @@ async function logApiCall(
  * console.log(`Cost: $${result.cost.totalCost.toFixed(6)}`);
  * ```
  */
-export async function openrouter<T>(
-  options: OpenRouterOptions
-): Promise<OpenRouterResult<T>> {
+export async function openrouter<T>(options: OpenRouterOptions): Promise<OpenRouterResult<T>> {
   const model = options.model || "anthropic/claude-sonnet-4.5";
 
   // Get model pricing (cached)
@@ -213,13 +210,13 @@ export async function openrouter<T>(
   // Extract response content - handle both streaming and non-streaming responses
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const responseData = response as any;
-  
+
   // Debug: log response structure to find usage data
   if (process.env.DEBUG_OPENROUTER) {
     console.log("OpenRouter response keys:", Object.keys(responseData));
     console.log("OpenRouter usage:", JSON.stringify(responseData.usage, null, 2));
   }
-  
+
   const content = responseData.choices?.[0]?.message?.content || "";
 
   // Parse response if JSON schema was provided
@@ -236,15 +233,13 @@ export async function openrouter<T>(
   }
 
   // Extract usage information - OpenRouter SDK may use camelCase
-  const inputTokens = responseData.usage?.prompt_tokens 
-    || responseData.usage?.promptTokens 
-    || 0;
-  const outputTokens = responseData.usage?.completion_tokens 
-    || responseData.usage?.completionTokens 
-    || 0;
-  const totalTokens = responseData.usage?.total_tokens 
-    || responseData.usage?.totalTokens 
-    || inputTokens + outputTokens;
+  const inputTokens = responseData.usage?.prompt_tokens || responseData.usage?.promptTokens || 0;
+  const outputTokens =
+    responseData.usage?.completion_tokens || responseData.usage?.completionTokens || 0;
+  const totalTokens =
+    responseData.usage?.total_tokens ||
+    responseData.usage?.totalTokens ||
+    inputTokens + outputTokens;
 
   // Calculate costs
   const cost = calculateCost(inputTokens, outputTokens, pricing);
@@ -276,9 +271,7 @@ export async function openrouter<T>(
 /**
  * Simple wrapper that returns just the data (for backward compatibility)
  */
-export async function openrouterSimple<T>(
-  options: OpenRouterOptions
-): Promise<T> {
+export async function openrouterSimple<T>(options: OpenRouterOptions): Promise<T> {
   const result = await openrouter<T>(options);
   return result.data;
 }

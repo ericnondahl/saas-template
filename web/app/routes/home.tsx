@@ -53,7 +53,7 @@ export default function Home() {
     if (isLoaded && user) {
       setLoading(true);
       setError(null);
-      
+
       fetch("/api/user")
         .then((res) => res.json())
         .then((data: ApiResponse<UserDTO>) => {
@@ -156,15 +156,11 @@ export default function Home() {
         </div>
         <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
           <h3 className="text-lg font-semibold mb-2 text-gray-900">🔐 Authentication</h3>
-          <p className="text-gray-600">
-            Clerk Auth integration for secure user management
-          </p>
+          <p className="text-gray-600">Clerk Auth integration for secure user management</p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
           <h3 className="text-lg font-semibold mb-2 text-gray-900">💾 Database Ready</h3>
-          <p className="text-gray-600">
-            Prisma ORM with PostgreSQL and Redis caching
-          </p>
+          <p className="text-gray-600">Prisma ORM with PostgreSQL and Redis caching</p>
         </div>
       </div>
     </div>

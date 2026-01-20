@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { useUser } from '@clerk/clerk-expo';
+import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { useUser } from "@clerk/clerk-expo";
 
 export default function HomeScreen() {
   const { user } = useUser();
@@ -8,11 +8,9 @@ export default function HomeScreen() {
     <ScrollView style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>
-          Welcome back{user?.firstName ? `, ${user.firstName}` : ''}!
+          Welcome back{user?.firstName ? `, ${user.firstName}` : ""}!
         </Text>
-        <Text style={styles.subtitle}>
-          Your SaaS mobile app is ready to go
-        </Text>
+        <Text style={styles.subtitle}>Your SaaS mobile app is ready to go</Text>
 
         <View style={styles.card}>
           <Text style={styles.cardTitle}>🚀 Getting Started</Text>
@@ -24,10 +22,8 @@ export default function HomeScreen() {
         <View style={styles.card}>
           <Text style={styles.cardTitle}>📱 Features</Text>
           <Text style={styles.cardText}>
-            • Authentication with Clerk{'\n'}
-            • Shared types with web app{'\n'}
-            • Expo Router navigation{'\n'}
-            • TypeScript support
+            • Authentication with Clerk{"\n"}• Shared types with web app{"\n"}• Expo Router
+            navigation{"\n"}• TypeScript support
           </Text>
         </View>
 
@@ -45,28 +41,28 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: "#f9fafb",
   },
   content: {
     padding: 20,
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#111827',
+    fontWeight: "bold",
+    color: "#111827",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 18,
-    color: '#6b7280',
+    color: "#6b7280",
     marginBottom: 24,
   },
   card: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     borderRadius: 12,
     padding: 20,
     marginBottom: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 1,
@@ -77,13 +73,13 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 20,
-    fontWeight: '600',
-    color: '#111827',
+    fontWeight: "600",
+    color: "#111827",
     marginBottom: 8,
   },
   cardText: {
     fontSize: 16,
-    color: '#6b7280',
+    color: "#6b7280",
     lineHeight: 24,
   },
 });

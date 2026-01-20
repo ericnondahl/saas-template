@@ -77,6 +77,7 @@ cp mobile/.env.example mobile/.env
 ```
 
 Get your API keys from:
+
 - Clerk: [clerk.com](https://clerk.com)
 - Resend (optional, for emails): [resend.com](https://resend.com)
 
@@ -276,6 +277,7 @@ Deploy to any Node.js hosting platform:
 - Google Cloud
 
 Make sure to:
+
 1. Set environment variables
 2. Run database migrations
 3. Build the app with `npm run build`
@@ -319,6 +321,7 @@ This project is licensed under the MIT License.
 ## 🙏 Acknowledgments
 
 Built with amazing open-source projects:
+
 - React Router 7
 - Expo
 - Clerk

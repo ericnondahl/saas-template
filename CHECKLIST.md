@@ -107,23 +107,27 @@ If any checkbox above fails, refer to:
 ## Common Issues
 
 **Port conflicts:**
+
 ```powershell
 # Kill process on port 3000
 Get-Process -Id (Get-NetTCPConnection -LocalPort 3000).OwningProcess | Stop-Process
 ```
 
 **Docker not starting:**
+
 ```powershell
 npm run docker:down
 npm run docker:up
 ```
 
 **Prisma errors:**
+
 ```powershell
 npm run db:generate
 ```
 
 **Module not found:**
+
 ```powershell
 cd packages\shared
 npm run build

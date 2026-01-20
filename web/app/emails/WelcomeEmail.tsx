@@ -19,10 +19,10 @@ interface WelcomeEmailProps {
   appUrl?: string;
 }
 
-export const WelcomeEmail = ({ 
-  firstName = "there", 
+export const WelcomeEmail = ({
+  firstName = "there",
   email,
-  appUrl = "http://localhost:5173" 
+  appUrl = "http://localhost:5173",
 }: WelcomeEmailProps) => {
   const unsubscribeUrl = `${appUrl}/unsubscribe?email=${encodeURIComponent(email)}`;
 
@@ -40,14 +40,11 @@ export const WelcomeEmail = ({
             <Text style={greeting}>Hi {firstName},</Text>
 
             <Text style={paragraph}>
-              We're excited to have you on board! Your account has been
-              successfully created, and you're all set to explore everything we
-              have to offer.
+              We're excited to have you on board! Your account has been successfully created, and
+              you're all set to explore everything we have to offer.
             </Text>
 
-            <Text style={paragraph}>
-              Here are a few things you can do to get started:
-            </Text>
+            <Text style={paragraph}>Here are a few things you can do to get started:</Text>
 
             <ul style={list}>
               <li style={listItem}>Complete your profile</li>
@@ -62,8 +59,8 @@ export const WelcomeEmail = ({
             </Section>
 
             <Text style={paragraph}>
-              If you have any questions or need help getting started, feel free
-              to reach out to our support team. We're here to help!
+              If you have any questions or need help getting started, feel free to reach out to our
+              support team. We're here to help!
             </Text>
           </Section>
 

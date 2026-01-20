@@ -61,9 +61,7 @@ export default function AdminsPage() {
       if (data.success) {
         // Update local state
         setUsers((prevUsers) =>
-          prevUsers.map((user) =>
-            user.id === userId ? { ...user, isAdmin } : user
-          )
+          prevUsers.map((user) => (user.id === userId ? { ...user, isAdmin } : user))
         );
       } else {
         alert(data.error?.message || "Failed to update admin status");
@@ -96,9 +94,7 @@ export default function AdminsPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Admin Management</h1>
-        <p className="text-gray-600 mt-2">
-          Manage admin privileges for users in the system
-        </p>
+        <p className="text-gray-600 mt-2">Manage admin privileges for users in the system</p>
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -125,9 +121,7 @@ export default function AdminsPage() {
                       ? `${user.firstName} ${user.lastName}`
                       : user.firstName || "N/A"}
                   </div>
-                  <div className="text-sm text-gray-500">
-                    {user.id.slice(0, 12)}...
-                  </div>
+                  <div className="text-sm text-gray-500">{user.id.slice(0, 12)}...</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">{user.email}</div>
@@ -138,29 +132,19 @@ export default function AdminsPage() {
                       <input
                         type="checkbox"
                         checked={user.isAdmin}
-                        onChange={(e) =>
-                          handleToggleAdmin(user.id, e.target.checked)
-                        }
+                        onChange={(e) => handleToggleAdmin(user.id, e.target.checked)}
                         disabled={updatingUserId === user.id}
                         className="sr-only"
                       />
                       <div
                         className={`block w-14 h-8 rounded-full transition-colors ${
                           user.isAdmin ? "bg-blue-600" : "bg-gray-300"
-                        } ${
-                          updatingUserId === user.id
-                            ? "opacity-50 cursor-not-allowed"
-                            : ""
-                        }`}
+                        } ${updatingUserId === user.id ? "opacity-50 cursor-not-allowed" : ""}`}
                       ></div>
                       <div
                         className={`absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform ${
                           user.isAdmin ? "transform translate-x-6" : ""
-                        } ${
-                          updatingUserId === user.id
-                            ? "flex items-center justify-center"
-                            : ""
-                        }`}
+                        } ${updatingUserId === user.id ? "flex items-center justify-center" : ""}`}
                       >
                         {updatingUserId === user.id && (
                           <svg

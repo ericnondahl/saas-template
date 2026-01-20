@@ -12,7 +12,7 @@ Shared TypeScript types and utilities for the SaaS template monorepo.
 ## Usage
 
 ```typescript
-import { User, ApiResponse } from '@saas-template/shared';
+import { User, ApiResponse } from "@saas-template/shared";
 ```
 
 ## How It Works
@@ -31,6 +31,7 @@ npm run typecheck
 ```
 
 To add new types:
+
 1. Create or edit files in `src/types/`
 2. Export them from `src/types/index.ts`
 3. They're immediately available in web and mobile apps

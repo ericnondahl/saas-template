@@ -46,11 +46,7 @@ export async function get<T>(key: string): Promise<T | null> {
  * @param value - The value to store (will be JSON stringified)
  * @param ttlSeconds - Time to live in seconds (optional)
  */
-export async function set(
-  key: string,
-  value: unknown,
-  ttlSeconds?: number
-): Promise<void> {
+export async function set(key: string, value: unknown, ttlSeconds?: number): Promise<void> {
   try {
     const serialized = JSON.stringify(value);
     if (ttlSeconds) {

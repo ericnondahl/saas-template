@@ -9,13 +9,13 @@ graph TB
         web[web/<br/>React Router 7 SSR]
         mobile[mobile/<br/>Expo React Native]
     end
-    
+
     subgraph services [External Services]
         clerk[Clerk Auth]
         postgres[(Postgres)]
         redis[(Redis)]
     end
-    
+
     web --> shared
     mobile --> shared
     web --> clerk
@@ -57,6 +57,7 @@ saas-template/
 ## Key Implementation Details
 
 ### 1. Modular Service Layer
+
 Create an abstraction layer in `web/app/services/` to make swapping providers easy:
 
 - `auth.server.ts` - Wraps Clerk, exposes `getCurrentUser()`, `requireAuth()`
@@ -64,21 +65,25 @@ Create an abstraction layer in `web/app/services/` to make swapping providers ea
 - `cache.server.ts` - Wraps Redis client with `get()`, `set()`, `del()`
 
 ### 2. React Router 7 with SSR
+
 - Use React Router 7 framework mode with Vite
 - Server-side rendering enabled via `@react-router/node`
 - Example API route at `routes/api.example.ts` using `loader`/`action`
 
 ### 3. Expo with Custom Native Code
+
 - Use `npx create-expo-app` with dev client template
 - Pre-generated `ios/` and `android/` folders for native modules
 - Expo Router for navigation
 
 ### 4. Shared Package
+
 - TypeScript types in `packages/shared/src/types/`
 - Example: `User` type used by both web and mobile
 - Compiled to JS with declarations
 
 ### 5. Database and Caching
+
 - Prisma schema with example `User` and `Post` models
 - Redis client for session/cache layer
 - Both services run via Docker Compose locally
@@ -86,6 +91,7 @@ Create an abstraction layer in `web/app/services/` to make swapping providers ea
 ### 6. Environment Configuration
 
 `.env.example` will include:
+
 ```
 # Clerk
 CLERK_PUBLISHABLE_KEY=pk_test_xxx
@@ -99,6 +105,7 @@ REDIS_URL=redis://localhost:6379
 ```
 
 ### 7. Cross-Platform Setup
+
 - `.gitattributes` with `* text=auto eol=lf` for consistent line endings
 - `.editorconfig` for consistent formatting
 - All scripts work on Windows/Mac/Linux
@@ -124,15 +131,15 @@ REDIS_URL=redis://localhost:6379
 
 ## Files to Create
 
-| File | Purpose |
-|------|---------|
-| `package.json` | Root package with scripts |
-| `tsconfig.base.json` | Shared TS config |
-| `.gitattributes` | Line ending normalization |
-| `.editorconfig` | Editor consistency |
-| `.env.example` | Environment template |
-| `docker-compose.yml` | Postgres + Redis |
-| `prisma/schema.prisma` | Database schema |
-| `packages/shared/*` | Shared types package |
-| `web/*` | React Router 7 app |
-| `mobile/*` | Expo React Native app |
+| File                   | Purpose                   |
+| ---------------------- | ------------------------- |
+| `package.json`         | Root package with scripts |
+| `tsconfig.base.json`   | Shared TS config          |
+| `.gitattributes`       | Line ending normalization |
+| `.editorconfig`        | Editor consistency        |
+| `.env.example`         | Environment template      |
+| `docker-compose.yml`   | Postgres + Redis          |
+| `prisma/schema.prisma` | Database schema           |
+| `packages/shared/*`    | Shared types package      |
+| `web/*`                | React Router 7 app        |
+| `mobile/*`             | Expo React Native app     |

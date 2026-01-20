@@ -7,10 +7,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const email = url.searchParams.get("email");
 
   if (!email) {
-    return data(
-      { success: false, message: "Email address is required." },
-      { status: 400 }
-    );
+    return data({ success: false, message: "Email address is required." }, { status: 400 });
   }
 
   try {
@@ -79,8 +76,8 @@ export default function Unsubscribe({ loaderData }: Route.ComponentProps) {
             </h1>
             <p className="text-gray-600 text-center mb-6">{message}</p>
             <p className="text-sm text-gray-500 text-center">
-              You will no longer receive email notifications from us. You can
-              update your preferences anytime by logging into your account.
+              You will no longer receive email notifications from us. You can update your
+              preferences anytime by logging into your account.
             </p>
           </>
         ) : (
@@ -105,16 +102,12 @@ export default function Unsubscribe({ loaderData }: Route.ComponentProps) {
             </h1>
             <p className="text-gray-600 text-center mb-6">{message}</p>
             <p className="text-sm text-gray-500 text-center">
-              If you continue to experience issues, please contact our support
-              team.
+              If you continue to experience issues, please contact our support team.
             </p>
           </>
         )}
         <div className="mt-6 text-center">
-          <a
-            href="/"
-            className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-          >
+          <a href="/" className="text-blue-600 hover:text-blue-700 text-sm font-medium">
             Return to Home
           </a>
         </div>

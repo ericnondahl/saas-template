@@ -139,6 +139,7 @@ Always specify version ranges appropriately.
 ## Questions?
 
 Feel free to open an issue for:
+
 - Bug reports
 - Feature requests
 - Documentation improvements

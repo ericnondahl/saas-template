@@ -23,15 +23,15 @@ try {
     jsonSchema: {
       type: "object",
       properties: {
-        message: { type: "string" }
+        message: { type: "string" },
       },
-      required: ["message"]
-    }
+      required: ["message"],
+    },
   });
 
   console.log("\n✓ OpenRouter call successful!");
   console.log("Response:", JSON.stringify(result, null, 2));
-  
+
   // Verify the response matches expected type
   if (result.data.message) {
     console.log("\n✓ Response has expected 'message' field");
@@ -39,7 +39,7 @@ try {
   } else {
     console.warn("\n⚠ Warning: Response missing 'message' field");
   }
-  
+
   // Display usage and cost information
   console.log("\n📊 Usage Statistics:");
   console.log(`  Input tokens: ${result.usage.inputTokens}`);
@@ -49,7 +49,6 @@ try {
   console.log(`  Input cost: $${result.cost.inputCost.toFixed(6)}`);
   console.log(`  Output cost: $${result.cost.outputCost.toFixed(6)}`);
   console.log(`  Total cost: $${result.cost.totalCost.toFixed(6)}`);
-  
 } catch (error) {
   console.error("\n✗ Failed to call OpenRouter:");
   console.error(error);

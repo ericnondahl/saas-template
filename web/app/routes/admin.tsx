@@ -5,10 +5,7 @@ import { getUserByClerkId } from "../services/user.server";
 import { SignedIn, UserButton } from "@clerk/react-router";
 
 export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "Admin Dashboard" },
-    { name: "description", content: "Admin control panel" },
-  ];
+  return [{ title: "Admin Dashboard" }, { name: "description", content: "Admin control panel" }];
 }
 
 export async function loader(args: Route.LoaderArgs) {

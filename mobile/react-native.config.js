@@ -1,7 +1,7 @@
 module.exports = {
   project: {
     android: {
-      packageName: 'com.saastemplate.app',
+      packageName: "com.saastemplate.app",
     },
   },
 };

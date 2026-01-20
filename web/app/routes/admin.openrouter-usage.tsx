@@ -114,12 +114,8 @@ export default function OpenRouterUsagePage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            OpenRouter Usage Dashboard
-          </h1>
-          <p className="text-gray-600 mt-2">
-            Monitor API usage and costs over time
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900">OpenRouter Usage Dashboard</h1>
+          <p className="text-gray-600 mt-2">Monitor API usage and costs over time</p>
         </div>
 
         {/* Time Period Selector */}
@@ -143,12 +139,8 @@ export default function OpenRouterUsagePage() {
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
-            Total Cost
-          </h3>
-          <p className="mt-2 text-3xl font-bold text-gray-900">
-            {formatCost(summary.totalCost)}
-          </p>
+          <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">Total Cost</h3>
+          <p className="mt-2 text-3xl font-bold text-gray-900">{formatCost(summary.totalCost)}</p>
           <p className="mt-1 text-sm text-gray-500">Last {days} days</p>
         </div>
 
@@ -178,9 +170,7 @@ export default function OpenRouterUsagePage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Cost Over Time */}
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Cost Over Time
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Cost Over Time</h3>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData}>
@@ -210,9 +200,7 @@ export default function OpenRouterUsagePage() {
 
           {/* Daily Call Volume */}
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Daily API Calls
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Daily API Calls</h3>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData}>
@@ -220,10 +208,7 @@ export default function OpenRouterUsagePage() {
                   <XAxis dataKey="dateLabel" tick={{ fontSize: 12 }} />
                   <YAxis tick={{ fontSize: 12 }} />
                   <Tooltip
-                    formatter={(value) => [
-                      formatNumber(value as number),
-                      "Calls",
-                    ]}
+                    formatter={(value) => [formatNumber(value as number), "Calls"]}
                     labelFormatter={(label) => `Date: ${label}`}
                   />
                   <Legend />
@@ -235,9 +220,7 @@ export default function OpenRouterUsagePage() {
         </div>
       ) : (
         <div className="bg-white rounded-lg shadow p-8 text-center">
-          <p className="text-gray-500">
-            No usage data available for the selected period
-          </p>
+          <p className="text-gray-500">No usage data available for the selected period</p>
         </div>
       )}
 
@@ -245,9 +228,7 @@ export default function OpenRouterUsagePage() {
       {summary.modelUsage.length > 0 && (
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">
-              Usage by Model
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-900">Usage by Model</h3>
           </div>
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">

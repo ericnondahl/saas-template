@@ -30,17 +30,20 @@ Copy-Item mobile\.env.example mobile\.env
 ### 3. Get API Keys
 
 **Clerk (Required):**
+
 1. Go to [clerk.com](https://clerk.com) and sign up/sign in
 2. Create a new application
 3. Copy your Publishable Key (starts with `pk_test_`)
 4. Copy your Secret Key (starts with `sk_test_`)
 
 **Resend (Optional, for emails):**
+
 1. Go to [resend.com](https://resend.com) and sign up/sign in
 2. Create an API key from your dashboard
 3. Copy your API Key (starts with `re_`)
 
 **OpenRouter (Optional, for AI):**
+
 1. Go to [openrouter.ai](https://openrouter.ai) and sign up/sign in
 2. Go to Settings > Keys and create an API key
 3. Copy your API Key (starts with `sk-or-`)
@@ -50,13 +53,16 @@ Copy-Item mobile\.env.example mobile\.env
 Edit `web\.env` and `mobile\.env` with your API keys:
 
 **Required:**
+
 - Replace `pk_test_xxxxx` with your actual Clerk publishable key in both files
 - Replace `sk_test_xxxxx` with your actual Clerk secret key in `web\.env`
 
 **Optional (for email functionality):**
+
 - Add your Resend API key to `web\.env`: `RESEND_API_KEY=re_your_key_here`
 
 **Optional (for AI functionality):**
+
 - Add your OpenRouter API key to `web\.env`: `OPENROUTER_API_KEY=sk-or-your_key_here`
 
 ### 5. Start Docker Services
@@ -77,6 +83,7 @@ When prompted for migration name: `initial_setup`
 ### 7. Start Development
 
 **Web App:**
+
 ```powershell
 npm run dev:web
 ```
@@ -84,6 +91,7 @@ npm run dev:web
 Visit: http://localhost:3000
 
 **Mobile App (in a new terminal):**
+
 ```powershell
 npm run dev:mobile
 ```
@@ -97,7 +105,7 @@ Copy and run these one by one:
 npm run install:all
 
 # Environment (copy example files)
-Copy-Item web\.env.example web\.env  
+Copy-Item web\.env.example web\.env
 Copy-Item mobile\.env.example mobile\.env
 
 # STOP HERE: Edit web/.env and mobile/.env with your Clerk keys!
@@ -115,6 +123,7 @@ npm run dev:web
 ```
 
 In a new terminal:
+
 ```powershell
 # Start mobile
 npm run dev:mobile
@@ -152,6 +161,7 @@ EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_key_here
 ### Dependencies Installation
 
 The `npm run install:all` command installs dependencies for:
+
 - Root workspace
 - Web app
 - Mobile app
@@ -170,16 +180,19 @@ You should see `saas-postgres` and `saas-redis` containers.
 ### Mobile App Options
 
 **Option 1: Expo Go (easier, but limited)**
+
 - Download Expo Go on your phone
 - Scan the QR code from the terminal
 
 **Option 2: iOS Simulator (macOS only)**
+
 ```bash
 cd mobile
 npm run ios
 ```
 
 **Option 3: Android Emulator**
+
 ```bash
 cd mobile
 npm run android
@@ -233,6 +246,7 @@ docker exec -it saas-redis redis-cli
 ```
 
 Test commands:
+
 ```redis
 PING
 # Should return PONG
@@ -250,6 +264,7 @@ exit
 ### Port Already in Use
 
 **Web (port 3000):**
+
 ```powershell
 # Windows PowerShell:
 Get-Process -Id (Get-NetTCPConnection -LocalPort 3000).OwningProcess | Stop-Process
@@ -259,6 +274,7 @@ lsof -ti:3000 | xargs kill
 ```
 
 **PostgreSQL (port 5432) or Redis (port 6379):**
+
 ```powershell
 npm run docker:down
 npm run docker:up
@@ -291,10 +307,12 @@ The shared package uses direct source imports via tsconfig path aliases. If you 
 ### Docker Issues
 
 **On Windows:**
+
 - Make sure Docker Desktop is running
 - Enable WSL 2 backend in Docker Desktop settings
 
 **Permission Issues:**
+
 ```bash
 # Reset Docker volumes
 npm run docker:down
@@ -311,6 +329,7 @@ npm run typecheck
 ```
 
 Common fixes:
+
 - Clear cache: Delete `node_modules` and reinstall
 - Restart TypeScript server in your IDE
 

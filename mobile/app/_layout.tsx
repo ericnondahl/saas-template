@@ -1,13 +1,13 @@
-import { useEffect } from 'react';
-import { Stack } from 'expo-router';
-import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo';
-import * as SecureStore from 'expo-secure-store';
-import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from "react";
+import { Stack } from "expo-router";
+import { ClerkProvider, ClerkLoaded } from "@clerk/clerk-expo";
+import * as SecureStore from "expo-secure-store";
+import * as SplashScreen from "expo-splash-screen";
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
 
-const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY || '';
+const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY || "";
 
 // Token cache for Clerk
 const tokenCache = {
@@ -36,15 +36,12 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <ClerkProvider 
-      publishableKey={CLERK_PUBLISHABLE_KEY} 
-      tokenCache={tokenCache}
-    >
+    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
       <ClerkLoaded>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="sign-in" options={{ title: 'Sign In' }} />
-          <Stack.Screen name="sign-up" options={{ title: 'Sign Up' }} />
+          <Stack.Screen name="sign-in" options={{ title: "Sign In" }} />
+          <Stack.Screen name="sign-up" options={{ title: "Sign Up" }} />
           <Stack.Screen name="oauth-callback" options={{ headerShown: false }} />
         </Stack>
       </ClerkLoaded>

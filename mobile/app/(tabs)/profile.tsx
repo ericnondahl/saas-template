@@ -1,11 +1,19 @@
-import { View, Text, StyleSheet, ScrollView, Pressable, Alert, ActivityIndicator } from 'react-native';
-import { useUser, useAuth } from '@clerk/clerk-expo';
-import { Ionicons } from '@expo/vector-icons';
-import { useState, useEffect } from 'react';
-import { UserDTO, ApiResponse } from '@saas-template/shared';
-import { UserProfile } from '../../components/UserProfile';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
+import { useUser, useAuth } from "@clerk/clerk-expo";
+import { Ionicons } from "@expo/vector-icons";
+import { useState, useEffect } from "react";
+import { UserDTO, ApiResponse } from "@saas-template/shared";
+import { UserProfile } from "../../components/UserProfile";
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5173';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:5173";
 
 export default function ProfileScreen() {
   const { user, isLoaded } = useUser();
@@ -30,15 +38,15 @@ export default function ProfileScreen() {
 
       // Get Clerk session token for authentication
       const token = await getToken();
-      
+
       if (!token) {
-        setError('Not authenticated');
+        setError("Not authenticated");
         return;
       }
 
       const response = await fetch(`${API_URL}/api/user`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -47,29 +55,25 @@ export default function ProfileScreen() {
       if (data.success && data.data) {
         setUserData(data.data);
       } else {
-        setError(data.error?.message || 'Failed to load user data');
+        setError(data.error?.message || "Failed to load user data");
       }
     } catch (err) {
-      console.error('[PROFILE] Error fetching user:', err);
-      setError('Failed to load user data');
+      console.error("[PROFILE] Error fetching user:", err);
+      setError("Failed to load user data");
     } finally {
       setLoading(false);
     }
   };
 
   const handleSignOut = () => {
-    Alert.alert(
-      'Sign Out',
-      'Are you sure you want to sign out?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Sign Out', 
-          style: 'destructive',
-          onPress: () => signOut()
-        },
-      ]
-    );
+    Alert.alert("Sign Out", "Are you sure you want to sign out?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Sign Out",
+        style: "destructive",
+        onPress: () => signOut(),
+      },
+    ]);
   };
 
   return (
@@ -91,15 +95,10 @@ export default function ProfileScreen() {
         </View>
       )}
 
-      {!loading && !error && userData && (
-        <UserProfile user={userData} />
-      )}
+      {!loading && !error && userData && <UserProfile user={userData} />}
 
       <View style={styles.section}>
-        <Pressable 
-          style={styles.button}
-          onPress={handleSignOut}
-        >
+        <Pressable style={styles.button} onPress={handleSignOut}>
           <Ionicons name="log-out-outline" size={20} color="#ef4444" />
           <Text style={styles.buttonText}>Sign Out</Text>
         </Pressable>
@@ -111,64 +110,64 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: "#f9fafb",
   },
   loadingContainer: {
     padding: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   loadingText: {
     marginTop: 12,
     fontSize: 16,
-    color: '#6b7280',
+    color: "#6b7280",
   },
   errorContainer: {
     margin: 16,
     padding: 20,
-    backgroundColor: '#fef2f2',
+    backgroundColor: "#fef2f2",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#fecaca',
-    alignItems: 'center',
+    borderColor: "#fecaca",
+    alignItems: "center",
   },
   errorText: {
     marginTop: 8,
     fontSize: 16,
-    color: '#dc2626',
-    textAlign: 'center',
+    color: "#dc2626",
+    textAlign: "center",
   },
   retryButton: {
     marginTop: 12,
     paddingHorizontal: 20,
     paddingVertical: 8,
-    backgroundColor: '#3b82f6',
+    backgroundColor: "#3b82f6",
     borderRadius: 8,
   },
   retryButtonText: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   section: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     marginTop: 16,
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: "#e5e7eb",
   },
   button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 8,
     paddingVertical: 12,
   },
   buttonText: {
     fontSize: 16,
-    color: '#ef4444',
-    fontWeight: '600',
+    color: "#ef4444",
+    fontWeight: "600",
   },
 });

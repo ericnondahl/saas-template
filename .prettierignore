@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+.cache/
+*.tsbuildinfo
+
+# Generated files
+.react-router/
+.expo/
+.expo-shared/
+
+# Prisma
+prisma/migrations/
+
+# Lock files
+package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
+coverage/
+.turbo/

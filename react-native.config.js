@@ -2,8 +2,8 @@
 module.exports = {
   project: {
     android: {
-      sourceDir: './mobile/android',
-      packageName: 'com.saastemplate.app',
+      sourceDir: "./mobile/android",
+      packageName: "com.saastemplate.app",
     },
   },
   // Don't autolink in the root - mobile has its own config

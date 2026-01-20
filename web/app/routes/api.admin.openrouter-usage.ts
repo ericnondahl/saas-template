@@ -59,16 +59,10 @@ export async function loader(args: any) {
   let totalCost = 0;
 
   // Group by date for daily usage
-  const dailyMap = new Map<
-    string,
-    { calls: number; totalTokens: number; totalCost: number }
-  >();
+  const dailyMap = new Map<string, { calls: number; totalTokens: number; totalCost: number }>();
 
   // Group by model for model usage
-  const modelMap = new Map<
-    string,
-    { calls: number; totalTokens: number; totalCost: number }
-  >();
+  const modelMap = new Map<string, { calls: number; totalTokens: number; totalCost: number }>();
 
   for (const log of logs) {
     const cost = parseFloat(log.totalCost.toString());
