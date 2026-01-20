@@ -11,6 +11,7 @@ A production-ready full-stack SaaS template with React Router 7 (SSR), Expo Reac
 - **Clerk Authentication** - Secure user authentication out of the box
 - **Prisma ORM** - Type-safe database access
 - **Redis Caching** - High-performance caching layer
+- **BullMQ Job Queues** - Background job processing with Redis-backed queues and admin monitoring
 - **OpenRouter AI** - AI/LLM integration with 300+ models, usage tracking, and cost monitoring
 - **Resend Email** - Email service for notifications using Resend API with unsubscribe
 - **Admin Dashboard** - Built-in admin panel with user management and AI usage analytics
@@ -133,6 +134,7 @@ cd mobile && npm run android
 - `npm run build` - Build all apps
 - `npm run dev:web` - Start web dev server
 - `npm run dev:mobile` - Start mobile dev server
+- `npm run worker` - Start BullMQ job worker
 - `npm run typecheck` - Type check all packages
 - `npm run db:generate` - Generate Prisma client
 - `npm run db:migrate` - Run database migrations
@@ -145,6 +147,7 @@ cd mobile && npm run android
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
 - `npm run start` - Start production server
+- `npm run worker` - Start BullMQ job worker
 
 ### Mobile App (in `mobile/`)
 
@@ -190,6 +193,12 @@ The web app uses a modular service layer in `web/app/services/`:
   - Support for structured JSON outputs via JSON schema
   - All calls logged to database for analytics
 
+- **`jobs/`** - BullMQ job queue infrastructure
+  - `queues.ts` - Queue definitions and registry
+  - `worker.ts` - Worker management (`startWorkers()`, `stopWorkers()`)
+  - `processors/` - Job processor functions
+  - Flexible deployment: run inline with web server or as separate process
+
 This abstraction makes it easy to swap providers if needed.
 
 ### Admin Panel
@@ -202,6 +211,10 @@ The template includes a built-in admin panel at `/admin` with:
   - Total cost, calls, and tokens
   - Daily usage trends
   - Per-model breakdown
+- **Queue Monitor** - Monitor BullMQ job queues
+  - Queue summary with job counts by status
+  - Job details with data, timestamps, and error info
+  - Filter by queue and job status
 
 ### Database Schema
 
@@ -247,6 +260,56 @@ npm run db:studio
 ```
 
 **Note:** All Prisma commands automatically load environment variables from `web/.env`, so make sure that file has your `DATABASE_URL` configured.
+
+## 📋 Job Queues
+
+The template includes BullMQ for background job processing with Redis:
+
+### Running the Worker
+
+**Standalone mode (recommended for production):**
+
+```bash
+# From root
+npm run worker
+
+# Or from web directory
+cd web && npm run worker
+```
+
+**Inline mode (for development or single-service deployment):**
+
+Set `RUN_WORKER=true` environment variable to start the worker with the web server:
+
+```bash
+RUN_WORKER=true npm run dev:web
+```
+
+### Creating Jobs
+
+```typescript
+import { testQueue } from "~/jobs";
+
+// Add a job to the queue
+await testQueue.add("job-name", {
+  userId: "user-123",
+  email: "user@example.com",
+});
+```
+
+### Adding New Queues
+
+1. Define the queue in `web/app/jobs/queues.ts`
+2. Create a processor in `web/app/jobs/processors/`
+3. Register the worker in `web/app/jobs/worker.ts`
+4. Add the queue to `allQueues` array for admin monitoring
+
+### Deployment Options
+
+- **Same service:** Set `RUN_WORKER=true` to run worker inline with web server
+- **Separate service:** Run `npm run worker` as a dedicated service (recommended for scale)
+
+Both options use the same Redis instance configured via `REDIS_URL`.
 
 ## 📱 Mobile Development
 
@@ -307,6 +370,7 @@ npm run typecheck
 - [Clerk Documentation](https://clerk.com/docs)
 - [Prisma Documentation](https://www.prisma.io/docs)
 - [Redis Documentation](https://redis.io/docs)
+- [BullMQ Documentation](https://docs.bullmq.io)
 - [OpenRouter Documentation](https://openrouter.ai/docs)
 - [Resend Documentation](https://resend.com/docs)
 
@@ -327,6 +391,7 @@ Built with amazing open-source projects:
 - Clerk
 - Prisma
 - Redis
+- BullMQ
 - OpenRouter
 - Resend
 - Recharts

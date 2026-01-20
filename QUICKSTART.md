@@ -236,6 +236,7 @@ Visit http://localhost:5555
    - **Admins** - Manage admin users
    - **API Logs** - View OpenRouter API call history
    - **Usage Dashboard** - Monitor AI usage and costs
+   - **Queues** - Monitor BullMQ job queues
 
 ### Test Redis
 
@@ -256,6 +257,24 @@ KEYS *
 
 exit
 ```
+
+### Test Job Queues
+
+1. Queue test jobs for all users:
+
+```bash
+cd web && npx tsx scripts/test-queue.ts
+```
+
+2. Start the worker to process jobs (in a new terminal):
+
+```bash
+npm run worker
+```
+
+3. You should see job processing logs in the worker terminal
+
+4. View queue status in the admin panel at http://localhost:3000/admin/queues
 
 ---
 
@@ -355,16 +374,23 @@ Common fixes:
    - Use the `openrouter()` function in `web/app/services/ai.server.ts`
    - View usage and costs in the admin panel at `/admin/openrouter-usage`
 
-4. **Extend Database Schema**
+4. **Set Up Job Queues**
+   - Job queues use Redis (already running from Docker)
+   - Test the queue with `cd web && npx tsx scripts/test-queue.ts`
+   - Start the worker in a separate terminal: `npm run worker`
+   - Monitor queues in the admin panel at `/admin/queues`
+   - For production: run `npm run worker` as a separate service, or set `RUN_WORKER=true` to run inline
+
+5. **Extend Database Schema**
    - Edit `prisma/schema.prisma`
    - Run `npm run db:migrate` to create migrations
 
-5. **Add New Features**
+6. **Add New Features**
    - Web routes: Create files in `web/app/routes/`
    - Mobile screens: Create files in `mobile/app/`
    - Shared types: Add to `packages/shared/src/types/`
 
-6. **Deploy Your App**
+7. **Deploy Your App**
    - See deployment section in README.md
 
 ---
@@ -380,6 +406,7 @@ Common fixes:
   - [React Router Docs](https://reactrouter.com)
   - [Expo Documentation](https://docs.expo.dev)
   - [Prisma Documentation](https://www.prisma.io/docs)
+  - [BullMQ Documentation](https://docs.bullmq.io)
   - [OpenRouter Documentation](https://openrouter.ai/docs)
   - [Resend Documentation](https://resend.com/docs)
 

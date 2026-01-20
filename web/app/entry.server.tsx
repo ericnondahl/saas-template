@@ -2,6 +2,19 @@ import type { EntryContext } from "react-router";
 import { ServerRouter } from "react-router";
 import { isbot } from "isbot";
 import { renderToReadableStream } from "react-dom/server";
+import { startWorkers } from "./jobs";
+
+/**
+ * Start BullMQ workers inline with the web server when RUN_WORKER=true.
+ * Workers only start once, even if this module is re-imported.
+ */
+let workersStarted = false;
+
+if (process.env.RUN_WORKER === "true" && !workersStarted) {
+  console.log("[entry.server] RUN_WORKER=true, starting inline workers...");
+  startWorkers();
+  workersStarted = true;
+}
 
 export default async function handleRequest(
   request: Request,

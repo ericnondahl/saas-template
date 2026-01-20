@@ -7,7 +7,8 @@
     "dev": "react-router dev --host",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
-    "email:dev": "email dev --dir app/emails"
+    "email:dev": "email dev --dir app/emails",
+    "worker": "tsx scripts/worker.ts"
   },
   "dependencies": {
     "@clerk/react-router": "^2.3.9",
@@ -16,6 +17,7 @@
     "@react-email/components": "^1.0.4",
     "@react-router/node": "7.12.0",
     "@react-router/serve": "7.12.0",
+    "bullmq": "^5.34.8",
     "expo-auth-session": "^7.0.10",
     "expo-crypto": "^15.0.8",
     "ioredis": "^5.9.2",

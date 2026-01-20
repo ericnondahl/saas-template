@@ -54,6 +54,12 @@ export default function AdminLayout() {
                 >
                   OpenRouter Usage
                 </Link>
+                <Link
+                  to="/admin/queues"
+                  className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                >
+                  Queues
+                </Link>
               </nav>
             </div>
             <div className="flex items-center space-x-4">
