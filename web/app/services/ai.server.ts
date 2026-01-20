@@ -38,6 +38,36 @@ export interface OpenRouterResult<T> {
   };
 }
 
+// Streaming types - no jsonSchema support since partial JSON chunks aren't useful
+export interface OpenRouterStreamingOptions {
+  model?: string;
+  prompt: string;
+  temperature?: number;
+  maxTokens?: number;
+}
+
+export interface OpenRouterStreamChunk {
+  type: "content";
+  content: string;
+}
+
+export interface OpenRouterStreamComplete {
+  type: "complete";
+  content: string;
+  usage: {
+    inputTokens: number;
+    outputTokens: number;
+    totalTokens: number;
+  };
+  cost: {
+    inputCost: number;
+    outputCost: number;
+    totalCost: number;
+  };
+}
+
+export type OpenRouterStreamEvent = OpenRouterStreamChunk | OpenRouterStreamComplete;
+
 interface ModelPricing {
   prompt: number; // Cost per million tokens for input
   completion: number; // Cost per million tokens for output
@@ -170,7 +200,7 @@ async function logApiCall(
  * console.log(`Cost: $${result.cost.totalCost.toFixed(6)}`);
  * ```
  */
-export async function openrouter<T>(options: OpenRouterOptions): Promise<OpenRouterResult<T>> {
+export async function openRouter<T>(options: OpenRouterOptions): Promise<OpenRouterResult<T>> {
   const model = options.model || "anthropic/claude-sonnet-4.5";
 
   // Get model pricing (cached)
@@ -269,9 +299,109 @@ export async function openrouter<T>(options: OpenRouterOptions): Promise<OpenRou
 }
 
 /**
- * Simple wrapper that returns just the data (for backward compatibility)
+ * Calls OpenRouter API with streaming support for progressive text responses.
+ *
+ * @param options - Configuration including prompt and model settings
+ * @param options.prompt - The prompt to send to the AI model
+ * @param options.model - Optional model identifier (defaults to claude-sonnet-4.5)
+ * @param options.temperature - Optional temperature for response randomness (0-2)
+ * @param options.maxTokens - Optional maximum tokens in response
+ * @yields OpenRouterStreamChunk for each content chunk, then OpenRouterStreamComplete with final data
+ *
+ * @example
+ * ```typescript
+ * const stream = openRouterStreaming({
+ *   prompt: "Tell me a story",
+ *   model: "anthropic/claude-sonnet-4.5",
+ * });
+ *
+ * for await (const event of stream) {
+ *   if (event.type === "content") {
+ *     process.stdout.write(event.content);
+ *   } else if (event.type === "complete") {
+ *     console.log("\nCost:", event.cost.totalCost);
+ *   }
+ * }
+ * ```
  */
-export async function openrouterSimple<T>(options: OpenRouterOptions): Promise<T> {
-  const result = await openrouter<T>(options);
-  return result.data;
+export async function* openRouterStreaming(
+  options: OpenRouterStreamingOptions
+): AsyncGenerator<OpenRouterStreamEvent> {
+  const model = options.model || "anthropic/claude-sonnet-4.5";
+
+  // Get model pricing (cached)
+  const pricing = await getModelPricing(model);
+
+  // Build request parameters with streaming enabled
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const requestParams: any = {
+    model,
+    messages: [{ role: "user", content: options.prompt }],
+    stream: true,
+    streamOptions: { includeUsage: true },
+  };
+
+  // Add optional parameters
+  if (options.temperature !== undefined) {
+    requestParams.temperature = options.temperature;
+  }
+
+  if (options.maxTokens !== undefined) {
+    requestParams.maxTokens = options.maxTokens;
+  }
+
+  // Make the streaming API call
+  const stream = await client.chat.send(requestParams);
+
+  // Accumulate content for logging
+  let fullContent = "";
+  let finalUsage: { inputTokens: number; outputTokens: number; totalTokens: number } | null = null;
+
+  // Iterate over stream chunks
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  for await (const chunk of stream as any) {
+    // Extract content from delta
+    const content = chunk.choices?.[0]?.delta?.content;
+    if (content) {
+      fullContent += content;
+      yield { type: "content", content };
+    }
+
+    // Check for usage info in final chunk
+    if (chunk.usage) {
+      const inputTokens =
+        chunk.usage.prompt_tokens || chunk.usage.promptTokens || 0;
+      const outputTokens =
+        chunk.usage.completion_tokens || chunk.usage.completionTokens || 0;
+      const totalTokens =
+        chunk.usage.total_tokens || chunk.usage.totalTokens || inputTokens + outputTokens;
+
+      finalUsage = { inputTokens, outputTokens, totalTokens };
+    }
+  }
+
+  // Calculate costs and log
+  const usage = finalUsage || { inputTokens: 0, outputTokens: 0, totalTokens: 0 };
+  const cost = calculateCost(usage.inputTokens, usage.outputTokens, pricing);
+
+  // Log the API call to the database
+  await logApiCall(
+    model,
+    options.prompt,
+    fullContent,
+    usage.inputTokens,
+    usage.outputTokens,
+    usage.totalTokens,
+    cost.inputCost,
+    cost.outputCost,
+    cost.totalCost
+  );
+
+  // Yield final complete event
+  yield {
+    type: "complete",
+    content: fullContent,
+    usage,
+    cost,
+  };
 }

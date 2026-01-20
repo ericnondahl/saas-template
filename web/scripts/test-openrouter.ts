@@ -3,7 +3,7 @@
  * Usage: npx tsx scripts/test-openrouter.ts
  */
 import "dotenv/config";
-import { openrouter } from "../app/services/ai.server";
+import { openRouter } from "../app/services/ai.server";
 import { disconnect as disconnectCache } from "../app/services/cache.server";
 import { db } from "../app/services/db.server";
 
@@ -17,7 +17,7 @@ interface TestResponse {
 console.log("Testing OpenRouter AI service...\n");
 
 try {
-  const result = await openrouter<TestResponse>({
+  const result = await openRouter<TestResponse>({
     prompt: "Say hello world",
     model: "anthropic/claude-sonnet-4.5",
     jsonSchema: {
