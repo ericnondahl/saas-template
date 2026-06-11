@@ -21,9 +21,20 @@ export function Footer() {
 
           {/* Links */}
           <div className="flex items-center gap-8 text-sm text-gray-600">
-            <a href="#features" className="hover:text-gray-900 transition-colors">Features</a>
-            <a href="#benefits" className="hover:text-gray-900 transition-colors">Benefits</a>
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-900 transition-colors">GitHub</a>
+            <a href="#features" className="hover:text-gray-900 transition-colors">
+              Features
+            </a>
+            <a href="#benefits" className="hover:text-gray-900 transition-colors">
+              Benefits
+            </a>
+            <a
+              href="https://github.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-gray-900 transition-colors"
+            >
+              GitHub
+            </a>
           </div>
 
           {/* Copyright */}

@@ -33,14 +33,9 @@ export function UserProfile({ user }: UserProfileProps) {
         <div className="flex items-center gap-4">
           <Avatar className="h-20 w-20">
             {user.imageUrl ? (
-              <AvatarImage
-                src={user.imageUrl}
-                alt={`${user.firstName || "User"}'s profile`}
-              />
+              <AvatarImage src={user.imageUrl} alt={`${user.firstName || "User"}'s profile`} />
             ) : null}
-            <AvatarFallback className="text-2xl font-semibold">
-              {initials}
-            </AvatarFallback>
+            <AvatarFallback className="text-2xl font-semibold">{initials}</AvatarFallback>
           </Avatar>
           <div>
             <h2 className="text-2xl font-bold text-foreground">{fullName}</h2>
@@ -53,21 +48,15 @@ export function UserProfile({ user }: UserProfileProps) {
         <Separator />
 
         <div>
-          <h3 className="text-lg font-semibold text-foreground mb-3">
-            User Details
-          </h3>
+          <h3 className="text-lg font-semibold text-foreground mb-3">User Details</h3>
           <dl className="space-y-2">
             <div className="flex justify-between">
               <dt className="text-muted-foreground font-medium">User ID:</dt>
-              <dd className="text-foreground font-mono text-sm">
-                {user.id.slice(0, 12)}...
-              </dd>
+              <dd className="text-foreground font-mono text-sm">{user.id.slice(0, 12)}...</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-muted-foreground font-medium">Clerk ID:</dt>
-              <dd className="text-foreground font-mono text-sm">
-                {user.clerkId.slice(0, 12)}...
-              </dd>
+              <dd className="text-foreground font-mono text-sm">{user.clerkId.slice(0, 12)}...</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-muted-foreground font-medium">First Name:</dt>
@@ -78,9 +67,7 @@ export function UserProfile({ user }: UserProfileProps) {
               <dd className="text-foreground">{user.lastName || "Not set"}</dd>
             </div>
             <div className="flex justify-between items-center">
-              <dt className="text-muted-foreground font-medium">
-                Account Type:
-              </dt>
+              <dt className="text-muted-foreground font-medium">Account Type:</dt>
               <dd>
                 {user.isAdmin ? (
                   <Badge variant="default">Admin</Badge>
@@ -94,15 +81,9 @@ export function UserProfile({ user }: UserProfileProps) {
 
         <Alert className="bg-muted border-border">
           <AlertDescription className="text-sm text-muted-foreground">
-            <strong className="text-foreground">Shared Type:</strong> This
-            component uses the{" "}
-            <code className="bg-secondary px-1 rounded text-foreground">
-              UserDTO
-            </code>{" "}
-            type from{" "}
-            <code className="bg-secondary px-1 rounded text-foreground">
-              @saas-template/shared
-            </code>
+            <strong className="text-foreground">Shared Type:</strong> This component uses the{" "}
+            <code className="bg-secondary px-1 rounded text-foreground">UserDTO</code> type from{" "}
+            <code className="bg-secondary px-1 rounded text-foreground">@saas-template/shared</code>
             , ensuring type safety across web and mobile!
           </AlertDescription>
         </Alert>

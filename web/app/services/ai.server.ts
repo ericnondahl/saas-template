@@ -369,10 +369,8 @@ export async function* openRouterStreaming(
 
     // Check for usage info in final chunk
     if (chunk.usage) {
-      const inputTokens =
-        chunk.usage.prompt_tokens || chunk.usage.promptTokens || 0;
-      const outputTokens =
-        chunk.usage.completion_tokens || chunk.usage.completionTokens || 0;
+      const inputTokens = chunk.usage.prompt_tokens || chunk.usage.promptTokens || 0;
+      const outputTokens = chunk.usage.completion_tokens || chunk.usage.completionTokens || 0;
       const totalTokens =
         chunk.usage.total_tokens || chunk.usage.totalTokens || inputTokens + outputTokens;
 

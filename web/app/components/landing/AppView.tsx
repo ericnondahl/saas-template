@@ -60,9 +60,7 @@ export function AppView() {
       <h1 className="text-4xl font-bold mb-8 text-foreground">SaaS Template</h1>
 
       <div className="flex gap-3 items-center mb-8">
-        <span className="text-muted-foreground mr-2">
-          Welcome, {user?.firstName || "User"}!
-        </span>
+        <span className="text-muted-foreground mr-2">Welcome, {user?.firstName || "User"}!</span>
         <UserButton afterSignOutUrl="/" />
         <SignOutButton>
           <Button variant="default" size="default">
@@ -121,17 +119,13 @@ export function AppView() {
         <Card>
           <CardHeader>
             <CardTitle>Authentication</CardTitle>
-            <CardDescription>
-              Clerk Auth integration for secure user management
-            </CardDescription>
+            <CardDescription>Clerk Auth integration for secure user management</CardDescription>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader>
             <CardTitle>Database Ready</CardTitle>
-            <CardDescription>
-              Prisma ORM with PostgreSQL and Redis caching
-            </CardDescription>
+            <CardDescription>Prisma ORM with PostgreSQL and Redis caching</CardDescription>
           </CardHeader>
         </Card>
       </div>

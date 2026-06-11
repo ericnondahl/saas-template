@@ -12,10 +12,7 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <motion.div 
-            className="flex items-center gap-2"
-            whileHover={{ scale: 1.02 }}
-          >
+          <motion.div className="flex items-center gap-2" whileHover={{ scale: 1.02 }}>
             <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">S</span>
             </div>
@@ -24,13 +21,22 @@ export function Header() {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium">
+            <a
+              href="#features"
+              className="text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium"
+            >
               Features
             </a>
-            <a href="#benefits" className="text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium">
+            <a
+              href="#benefits"
+              className="text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium"
+            >
               Benefits
             </a>
-            <a href="#cta" className="text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium">
+            <a
+              href="#cta"
+              className="text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium"
+            >
               Get Started
             </a>
           </nav>

@@ -146,18 +146,12 @@ export default function OpenRouterLogsPage() {
                     <Badge variant="secondary">{log.model}</Badge>
                   </TableCell>
                   <TableCell className="max-w-xs">
-                    <div
-                      className="truncate text-muted-foreground"
-                      title={log.inputText}
-                    >
+                    <div className="truncate text-muted-foreground" title={log.inputText}>
                       {truncateText(log.inputText, 50)}
                     </div>
                   </TableCell>
                   <TableCell className="max-w-xs">
-                    <div
-                      className="truncate text-muted-foreground"
-                      title={log.outputText}
-                    >
+                    <div className="truncate text-muted-foreground" title={log.outputText}>
                       {truncateText(log.outputText, 50)}
                     </div>
                   </TableCell>
@@ -177,17 +171,13 @@ export default function OpenRouterLogsPage() {
                     <TableCell colSpan={7} className="bg-muted/50 p-4">
                       <div className="space-y-4">
                         <div>
-                          <h4 className="text-sm font-medium text-foreground mb-2">
-                            Full Input:
-                          </h4>
+                          <h4 className="text-sm font-medium text-foreground mb-2">Full Input:</h4>
                           <pre className="text-sm text-muted-foreground bg-background p-3 rounded-md border border-border whitespace-pre-wrap max-h-48 overflow-y-auto">
                             {log.inputText}
                           </pre>
                         </div>
                         <div>
-                          <h4 className="text-sm font-medium text-foreground mb-2">
-                            Full Output:
-                          </h4>
+                          <h4 className="text-sm font-medium text-foreground mb-2">Full Output:</h4>
                           <pre className="text-sm text-muted-foreground bg-background p-3 rounded-md border border-border whitespace-pre-wrap max-h-48 overflow-y-auto">
                             {log.outputText}
                           </pre>

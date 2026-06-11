@@ -186,9 +186,7 @@ export default function QueuesPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Job Queues</h1>
-          <p className="text-muted-foreground mt-2">
-            Monitor BullMQ job queues and their status
-          </p>
+          <p className="text-muted-foreground mt-2">Monitor BullMQ job queues and their status</p>
         </div>
         <Button onClick={handleRefresh} variant="outline">
           <RefreshCw className="h-4 w-4" />
@@ -217,9 +215,7 @@ export default function QueuesPage() {
             <CardContent>
               <div className="text-sm text-muted-foreground mb-3">
                 Total Jobs:{" "}
-                <span className="font-medium text-foreground">
-                  {getTotalJobs(queue.counts)}
-                </span>
+                <span className="font-medium text-foreground">{getTotalJobs(queue.counts)}</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {Object.entries(queue.counts).map(([status, count]) => {
@@ -299,9 +295,7 @@ export default function QueuesPage() {
                   <Fragment key={job.id}>
                     <TableRow
                       className="cursor-pointer"
-                      onClick={() =>
-                        setExpandedJobId(expandedJobId === job.id ? null : job.id)
-                      }
+                      onClick={() => setExpandedJobId(expandedJobId === job.id ? null : job.id)}
                     >
                       <TableCell className="w-8">
                         {expandedJobId === job.id ? (
@@ -310,9 +304,7 @@ export default function QueuesPage() {
                           <ChevronRight className="h-4 w-4 text-muted-foreground" />
                         )}
                       </TableCell>
-                      <TableCell className="font-mono text-foreground">
-                        {job.id}
-                      </TableCell>
+                      <TableCell className="font-mono text-foreground">{job.id}</TableCell>
                       <TableCell className="text-foreground">{job.name}</TableCell>
                       <TableCell>
                         <Badge variant={STATUS_VARIANTS[job.status] || "secondary"}>

@@ -66,9 +66,7 @@ export default function AdminLayout() {
               </nav>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-muted-foreground hidden sm:inline">
-                Admin Panel
-              </span>
+              <span className="text-sm text-muted-foreground hidden sm:inline">Admin Panel</span>
               <SignedIn>
                 <UserButton afterSignOutUrl="/" />
               </SignedIn>

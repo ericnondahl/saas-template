@@ -6,12 +6,12 @@ This guide walks you through deploying the SaaS template to [Railway](https://ra
 
 You'll deploy 4 services:
 
-| Service      | Type            | Purpose                        |
-| ------------ | --------------- | ------------------------------ |
-| **postgres** | Railway Plugin  | Database                       |
-| **redis**    | Railway Plugin  | Job queue backend              |
-| **web**      | GitHub Deploy   | React Router web application   |
-| **worker**   | GitHub Deploy   | BullMQ background job processor |
+| Service      | Type           | Purpose                         |
+| ------------ | -------------- | ------------------------------- |
+| **postgres** | Railway Plugin | Database                        |
+| **redis**    | Railway Plugin | Job queue backend               |
+| **web**      | GitHub Deploy  | React Router web application    |
+| **worker**   | GitHub Deploy  | BullMQ background job processor |
 
 ## Step 1: Create Railway Project
 

@@ -153,12 +153,8 @@ export default function OpenRouterUsagePage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">
-            OpenRouter Usage Dashboard
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Monitor API usage and costs over time
-          </p>
+          <h1 className="text-3xl font-bold text-foreground">OpenRouter Usage Dashboard</h1>
+          <p className="text-muted-foreground mt-2">Monitor API usage and costs over time</p>
         </div>
 
         {/* Time Period Selector */}
@@ -180,9 +176,7 @@ export default function OpenRouterUsagePage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Cost
-            </CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Cost</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -312,9 +306,7 @@ export default function OpenRouterUsagePage() {
       ) : (
         <Card>
           <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">
-              No usage data available for the selected period
-            </p>
+            <p className="text-muted-foreground">No usage data available for the selected period</p>
           </CardContent>
         </Card>
       )}
@@ -324,9 +316,7 @@ export default function OpenRouterUsagePage() {
         <Card>
           <CardHeader>
             <CardTitle>Usage by Model</CardTitle>
-            <CardDescription>
-              Breakdown of API usage across different models
-            </CardDescription>
+            <CardDescription>Breakdown of API usage across different models</CardDescription>
           </CardHeader>
           <Table>
             <TableHeader>
