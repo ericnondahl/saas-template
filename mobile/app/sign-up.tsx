@@ -10,20 +10,15 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
-import { useRouter, Link } from "expo-router";
-import { useSignUp, useAuth } from "@clerk/clerk-expo";
-import * as Application from "expo-application";
+import { Link } from "expo-router";
+import { useSignUp } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
-import { latchSignedIn } from "../lib/authGuard";
-import { markSignedInBefore } from "../lib/authStorage";
-
-// API URL for syncing user to database
-const API_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000";
+import { useSocialAuth } from "../lib/useSocialAuth";
 
 export default function SignUpScreen() {
   const { signUp, setActive, isLoaded } = useSignUp();
-  const { getToken } = useAuth();
-  const router = useRouter();
+  const { signInWithGoogle, signInWithApple, completeSignIn, isSocialLoading, socialError } =
+    useSocialAuth();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -35,38 +30,8 @@ export default function SignUpScreen() {
   const [error, setError] = useState<string | null>(null);
   const [pendingVerification, setPendingVerification] = useState(false);
 
-  // Sync user to database after sign-up
-  const syncUserToDatabase = async () => {
-    try {
-      const token = await getToken();
-      if (!token) {
-        console.warn("No token available for sync");
-        return;
-      }
-
-      const response = await fetch(`${API_URL}/api/sync-user`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          platform: Platform.OS,
-          clientVersion: Application.nativeApplicationVersion ?? undefined,
-        }),
-      });
-
-      if (!response.ok) {
-        console.warn("Failed to sync user:", response.status);
-      } else {
-        console.log("User synced to database");
-      }
-    } catch (err) {
-      // Don't block sign-up if sync fails
-      console.warn("Error syncing user:", err);
-    }
-  };
+  const busy = isLoading || isSocialLoading;
+  const displayError = error || socialError;
 
   // Handle sign up
   const handleSignUp = async () => {
@@ -129,13 +94,9 @@ export default function SignUpScreen() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        // Latch BEFORE navigating so the (tabs) guard can't bounce us back on
-        // a transient signed-out read — see lib/authGuard.ts.
-        latchSignedIn();
-        markSignedInBefore();
-        // Sync user to database after successful verification
-        await syncUserToDatabase();
-        router.replace("/(tabs)");
+        // Latches the session, syncs the user to the database, and navigates
+        // to /(tabs) — see lib/useSocialAuth.ts.
+        await completeSignIn();
       } else {
         console.log("Verification result:", result);
         setError("Verification incomplete. Please try again.");
@@ -244,12 +205,38 @@ export default function SignUpScreen() {
           <Text style={styles.title}>Create Account</Text>
           <Text style={styles.subtitle}>Sign up to get started</Text>
 
-          {error && (
+          {displayError && (
             <View style={styles.errorContainer}>
               <Ionicons name="alert-circle" size={20} color="#dc2626" />
-              <Text style={styles.errorText}>{error}</Text>
+              <Text style={styles.errorText}>{displayError}</Text>
             </View>
           )}
+
+          {/* Google Sign Up Button */}
+          <Pressable
+            style={[styles.googleButton, busy && styles.buttonDisabled]}
+            onPress={signInWithGoogle}
+            disabled={busy}
+          >
+            <Ionicons name="logo-google" size={20} color="#ffffff" />
+            <Text style={styles.googleButtonText}>Continue with Google</Text>
+          </Pressable>
+
+          {/* Apple Sign Up Button */}
+          <Pressable
+            style={[styles.appleButton, busy && styles.buttonDisabled]}
+            onPress={signInWithApple}
+            disabled={busy}
+          >
+            <Ionicons name="logo-apple" size={20} color="#ffffff" />
+            <Text style={styles.appleButtonText}>Continue with Apple</Text>
+          </Pressable>
+
+          <View style={styles.divider}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>or</Text>
+            <View style={styles.dividerLine} />
+          </View>
 
           {/* Name Row */}
           <View style={styles.nameRow}>
@@ -329,9 +316,9 @@ export default function SignUpScreen() {
 
           {/* Sign Up Button */}
           <Pressable
-            style={[styles.signUpButton, isLoading && styles.buttonDisabled]}
+            style={[styles.signUpButton, busy && styles.buttonDisabled]}
             onPress={handleSignUp}
-            disabled={isLoading}
+            disabled={busy}
           >
             {isLoading ? (
               <ActivityIndicator color="#ffffff" />
@@ -404,6 +391,50 @@ const styles = StyleSheet.create({
     color: "#dc2626",
     fontSize: 14,
     flex: 1,
+  },
+  googleButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#4285f4",
+    paddingVertical: 14,
+    borderRadius: 8,
+    gap: 12,
+  },
+  googleButtonText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  appleButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#000000",
+    paddingVertical: 14,
+    borderRadius: 8,
+    gap: 12,
+    marginTop: 12,
+  },
+  appleButtonText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  divider: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 24,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#e5e7eb",
+  },
+  dividerText: {
+    color: "#9ca3af",
+    paddingHorizontal: 16,
+    fontSize: 14,
   },
   nameRow: {
     flexDirection: "row",

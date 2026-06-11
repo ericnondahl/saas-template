@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,43 +10,16 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
-import { useRouter, Link } from "expo-router";
-import { useSignIn, useSignUp, useSSO, useAuth } from "@clerk/clerk-expo";
-import * as AppleAuthentication from "expo-apple-authentication";
-import * as Application from "expo-application";
-import * as Crypto from "expo-crypto";
-import * as WebBrowser from "expo-web-browser";
+import { Link } from "expo-router";
+import { useSignIn } from "@clerk/clerk-expo";
 import * as Linking from "expo-linking";
 import { Ionicons } from "@expo/vector-icons";
-import { latchSignedIn } from "../lib/authGuard";
-import { markSignedInBefore } from "../lib/authStorage";
-
-// Required for OAuth to work properly on web - only call on web platform
-if (Platform.OS === "web") {
-  WebBrowser.maybeCompleteAuthSession();
-}
-
-// API URL for syncing user to database
-const API_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000";
-
-// Warm up browser for faster OAuth on Android
-const useWarmUpBrowser = () => {
-  useEffect(() => {
-    void WebBrowser.warmUpAsync();
-    return () => {
-      void WebBrowser.coolDownAsync();
-    };
-  }, []);
-};
+import { useSocialAuth } from "../lib/useSocialAuth";
 
 export default function SignInScreen() {
-  useWarmUpBrowser();
-
   const { signIn, setActive, isLoaded } = useSignIn();
-  const { signUp: clerkSignUp } = useSignUp();
-  const { startSSOFlow } = useSSO();
-  const { getToken } = useAuth();
-  const router = useRouter();
+  const { signInWithGoogle, signInWithApple, completeSignIn, isSocialLoading, socialError } =
+    useSocialAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -71,174 +44,8 @@ export default function SignInScreen() {
     return () => subscription.remove();
   }, []);
 
-  // Sync user to database after sign-in. `name` carries the name captured
-  // from Apple's native credential — Apple provides it only on the first
-  // authorization, and never through the OAuth flow.
-  const syncUserToDatabase = async (name?: { firstName?: string; lastName?: string }) => {
-    try {
-      console.log("Syncing user to database");
-      const token = await getToken();
-      if (!token) {
-        console.warn("No token available for sync");
-        return;
-      }
-
-      const response = await fetch(`${API_URL}/api/sync-user`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...name,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          platform: Platform.OS,
-          clientVersion: Application.nativeApplicationVersion ?? undefined,
-        }),
-      });
-
-      if (!response.ok) {
-        console.warn("Failed to sync user:", response.status);
-      } else {
-        console.log("User synced to database");
-      }
-    } catch (err) {
-      // Don't block sign-in if sync fails
-      console.warn("Error syncing user:", err);
-    }
-  };
-
-  // Common post-setActive steps for every auth flow. Latch BEFORE navigating
-  // so the (tabs) guard can't bounce us back on a transient signed-out read
-  // while Clerk reloads resources — see lib/authGuard.ts.
-  const completeSignIn = async (name?: { firstName?: string; lastName?: string }) => {
-    latchSignedIn();
-    // Remember this device has authenticated, so a later expired-session
-    // cold start routes to /sign-in rather than the new-install flow.
-    markSignedInBefore();
-    await syncUserToDatabase(name);
-    router.replace("/(tabs)");
-  };
-
-  // Handle Google OAuth sign in using Clerk's hosted OAuth
-  const handleGoogleSignIn = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      const redirectUrl = Linking.createURL("oauth-callback");
-      console.log("Starting OAuth with redirect URL:", redirectUrl);
-
-      const result = await startSSOFlow({
-        strategy: "oauth_google",
-        redirectUrl,
-      });
-
-      // Note: Don't JSON.stringify the result - it has getters that access window.location
-      // which doesn't exist in React Native and causes "href of undefined" errors
-      console.log("OAuth completed, sessionId:", result.createdSessionId);
-
-      if (result.createdSessionId) {
-        await result.setActive!({ session: result.createdSessionId });
-        await completeSignIn();
-      } else if (result.signIn || result.signUp) {
-        // Handle cases where additional steps might be needed
-        console.log("OAuth requires additional steps");
-        setError("Please complete the sign-up process");
-      }
-    } catch (err: any) {
-      console.error("Google sign in error:", err);
-      setError(
-        err.errors?.[0]?.message || "Failed to sign in with Google. Try email sign-in instead."
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }, [startSSOFlow, router, getToken]);
-
-  // Handle Apple sign in - native on iOS, OAuth on Android
-  const handleAppleSignIn = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      if (Platform.OS === "ios") {
-        // Custom native Apple authentication to capture the user's name
-        // (Clerk's OAuth flow discards the name from Apple's credential,
-        // and Apple only provides it on the very first authorization)
-        const nonce = Crypto.randomUUID();
-
-        const credential = await AppleAuthentication.signInAsync({
-          requestedScopes: [
-            AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-            AppleAuthentication.AppleAuthenticationScope.EMAIL,
-          ],
-          nonce,
-        });
-
-        const appleFirstName = credential.fullName?.givenName ?? undefined;
-        const appleLastName = credential.fullName?.familyName ?? undefined;
-
-        const { identityToken } = credential;
-        if (!identityToken) {
-          setError("No identity token received from Apple Sign-In.");
-          return;
-        }
-
-        // Exchange the Apple ID token with Clerk
-        await signIn!.create({
-          strategy: "oauth_token_apple",
-          token: identityToken,
-        });
-
-        // Check if user needs to be created (transfer from sign-in to sign-up)
-        const userNeedsToBeCreated = signIn!.firstFactorVerification.status === "transferable";
-
-        let sessionId: string | null;
-        if (userNeedsToBeCreated) {
-          await clerkSignUp!.create({ transfer: true });
-          sessionId = clerkSignUp!.createdSessionId;
-        } else {
-          sessionId = signIn!.createdSessionId;
-        }
-
-        if (sessionId) {
-          await setActive!({ session: sessionId });
-          await completeSignIn({ firstName: appleFirstName, lastName: appleLastName });
-        }
-      } else {
-        // Use OAuth-based flow on Android
-        const redirectUrl = Linking.createURL("oauth-callback");
-        console.log("Starting Apple OAuth with redirect URL:", redirectUrl);
-
-        const result = await startSSOFlow({
-          strategy: "oauth_apple",
-          redirectUrl,
-        });
-
-        if (result.createdSessionId) {
-          await result.setActive!({ session: result.createdSessionId });
-          await completeSignIn();
-        } else if (result.signIn || result.signUp) {
-          console.log("Apple OAuth requires additional steps");
-          setError("Please complete the sign-in process");
-        }
-      }
-    } catch (err: any) {
-      if (err.code === "ERR_REQUEST_CANCELED") {
-        // User cancelled - not an error
-        return;
-      }
-      if (err.errors?.[0]?.code === "session_exists") {
-        router.replace("/(tabs)");
-        return;
-      }
-      console.error("Apple sign in error:", err);
-      setError(err.errors?.[0]?.message || "Failed to sign in with Apple");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [signIn, clerkSignUp, setActive, startSSOFlow, router]);
+  const busy = isLoading || isSocialLoading;
+  const displayError = error || socialError;
 
   // Handle email/password sign in
   const handleEmailSignIn = async () => {
@@ -456,18 +263,18 @@ export default function SignInScreen() {
           <Text style={styles.title}>Welcome Back</Text>
           <Text style={styles.subtitle}>Sign in to your account</Text>
 
-          {error && (
+          {displayError && (
             <View style={styles.errorContainer}>
               <Ionicons name="alert-circle" size={20} color="#dc2626" />
-              <Text style={styles.errorText}>{error}</Text>
+              <Text style={styles.errorText}>{displayError}</Text>
             </View>
           )}
 
           {/* Google Sign In Button */}
           <Pressable
-            style={[styles.googleButton, isLoading && styles.buttonDisabled]}
-            onPress={handleGoogleSignIn}
-            disabled={isLoading}
+            style={[styles.googleButton, busy && styles.buttonDisabled]}
+            onPress={signInWithGoogle}
+            disabled={busy}
           >
             <Ionicons name="logo-google" size={20} color="#ffffff" />
             <Text style={styles.googleButtonText}>Continue with Google</Text>
@@ -475,9 +282,9 @@ export default function SignInScreen() {
 
           {/* Apple Sign In Button */}
           <Pressable
-            style={[styles.appleButton, isLoading && styles.buttonDisabled]}
-            onPress={handleAppleSignIn}
-            disabled={isLoading}
+            style={[styles.appleButton, busy && styles.buttonDisabled]}
+            onPress={signInWithApple}
+            disabled={busy}
           >
             <Ionicons name="logo-apple" size={20} color="#ffffff" />
             <Text style={styles.appleButtonText}>Continue with Apple</Text>
@@ -522,9 +329,9 @@ export default function SignInScreen() {
 
           {/* Sign In Button */}
           <Pressable
-            style={[styles.signInButton, isLoading && styles.buttonDisabled]}
+            style={[styles.signInButton, busy && styles.buttonDisabled]}
             onPress={handleEmailSignIn}
-            disabled={isLoading}
+            disabled={busy}
           >
             {isLoading ? (
               <ActivityIndicator color="#ffffff" />
