@@ -52,7 +52,7 @@ export async function loader(args: Route.LoaderArgs) {
 
 export default function App({ loaderData }: Route.ComponentProps) {
   return (
-    <ClerkProvider loaderData={loaderData}>
+    <ClerkProvider loaderData={loaderData} afterSignOutUrl="/">
       <PostHogProvider>
         <Outlet />
       </PostHogProvider>

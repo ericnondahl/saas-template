@@ -2,7 +2,7 @@ import { Outlet, Link, redirect } from "react-router";
 import { getAuth } from "@clerk/react-router/server";
 import type { Route } from "./+types/admin";
 import { getUserByClerkId } from "../services/user.server";
-import { SignedIn, UserButton } from "@clerk/react-router";
+import { Show, UserButton } from "@clerk/react-router";
 import { Home, Users, FileText, BarChart3, ListTodo } from "lucide-react";
 import { Button } from "~/components/ui";
 import { cn } from "~/lib/utils";
@@ -67,9 +67,9 @@ export default function AdminLayout() {
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-muted-foreground hidden sm:inline">Admin Panel</span>
-              <SignedIn>
-                <UserButton afterSignOutUrl="/" />
-              </SignedIn>
+              <Show when="signed-in">
+                <UserButton />
+              </Show>
             </div>
           </div>
         </div>

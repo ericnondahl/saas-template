@@ -17,9 +17,9 @@
     "check": "npm run format && npm run typecheck && npm run test"
   },
   "devDependencies": {
-    "@types/node": "^20.11.0",
-    "prettier": "^3.2.5",
-    "typescript": "^5.3.3",
+    "@types/node": "^22",
+    "prettier": "^3.8.4",
+    "typescript": "^6.0.3",
     "vitest": "^4.0.18"
   }
 }

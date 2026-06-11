@@ -61,7 +61,7 @@ export function AppView() {
 
       <div className="flex gap-3 items-center mb-8">
         <span className="text-muted-foreground mr-2">Welcome, {user?.firstName || "User"}!</span>
-        <UserButton afterSignOutUrl="/" />
+        <UserButton />
         <SignOutButton>
           <Button variant="default" size="default">
             <LogOut className="h-4 w-4" />

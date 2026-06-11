@@ -1,4 +1,4 @@
-import { SignedIn, SignedOut } from "@clerk/react-router";
+import { Show } from "@clerk/react-router";
 import { getAuth, createClerkClient } from "@clerk/react-router/server";
 import type { Route } from "./+types/home";
 import { syncUser } from "../services/user.server";
@@ -64,12 +64,12 @@ export async function loader(args: Route.LoaderArgs) {
 export default function Home() {
   return (
     <>
-      <SignedOut>
+      <Show when="signed-out">
         <LandingPage />
-      </SignedOut>
-      <SignedIn>
+      </Show>
+      <Show when="signed-in">
         <AppView />
-      </SignedIn>
+      </Show>
     </>
   );
 }
