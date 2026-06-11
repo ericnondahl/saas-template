@@ -96,7 +96,7 @@ export const WelcomeEmail = ({ firstName = "there", unsubscribeUrl }: WelcomeEma
 
 WelcomeEmail.PreviewProps = {
   firstName: "Jane",
-  unsubscribeUrl: "http://localhost:5173/unsubscribe?token=preview",
+  unsubscribeUrl: "http://localhost:3000/unsubscribe?token=preview",
 } satisfies WelcomeEmailProps;
 
 export default WelcomeEmail;

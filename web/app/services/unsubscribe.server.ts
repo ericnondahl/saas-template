@@ -5,9 +5,7 @@ const PURPOSE = "unsubscribe";
 function getSecret(): string {
   const secret = process.env.UNSUBSCRIBE_SECRET || process.env.CLERK_SECRET_KEY;
   if (!secret) {
-    throw new Error(
-      "Set UNSUBSCRIBE_SECRET (or CLERK_SECRET_KEY) to sign unsubscribe tokens"
-    );
+    throw new Error("Set UNSUBSCRIBE_SECRET (or CLERK_SECRET_KEY) to sign unsubscribe tokens");
   }
   return secret;
 }

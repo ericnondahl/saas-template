@@ -362,6 +362,12 @@ npm run ios
 npm run android
 ```
 
+### First-build notes
+
+- **Android SDK location:** `npm run android` fails with _"SDK location not found"_ unless `ANDROID_HOME` is set (e.g. `export ANDROID_HOME=$HOME/Library/Android/sdk`) or `mobile/android/local.properties` contains `sdk.dir=<path to your Android SDK>`.
+- **CocoaPods:** the first `npm run ios` runs `pod install`; if it fails with _"None of your spec sources contain a spec satisfying the dependency"_, your local spec repo is stale — run `pod install --repo-update` in `mobile/ios`.
+- **Android emulator networking:** inside the emulator, `localhost` is the emulator itself. To reach the web dev server on your machine, set `EXPO_PUBLIC_API_URL=http://10.0.2.2:3000` in `mobile/.env`.
+
 For production builds, use [EAS Build](https://docs.expo.dev/build/introduction/).
 
 ## 🚢 Deployment

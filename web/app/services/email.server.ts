@@ -30,7 +30,7 @@ export async function sendWelcomeEmail(email: string, firstName?: string | null)
     return null;
   }
 
-  const appUrl = process.env.APP_URL || "http://localhost:5173";
+  const appUrl = process.env.APP_URL || "http://localhost:3000";
 
   // Signed, single-purpose unsubscribe link — the raw email never appears in
   // the URL. Only possible when the recipient has a user record.

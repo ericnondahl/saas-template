@@ -4,12 +4,12 @@
   "type": "module",
   "scripts": {
     "build": "react-router build",
-    "dev": "react-router dev --host",
+    "dev": "react-router dev --host --port 3000",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
     "test": "vitest run",
     "test:watch": "vitest",
-    "email:dev": "email dev --dir app/emails",
+    "email:dev": "email dev --dir app/emails --port 3001",
     "worker": "tsx scripts/worker.ts",
     "format": "prettier --write --log-level error .",
     "format:check": "prettier --check .",
@@ -30,8 +30,6 @@
     "bullmq": "^5.78.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "expo-auth-session": "^7.0.10",
-    "expo-crypto": "^15.0.8",
     "framer-motion": "^12.40.0",
     "ioredis": "^5.11.1",
     "isbot": "^5.1.42",
@@ -46,6 +44,8 @@
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
+    "@react-email/preview-server": "^5.2.11",
+    "@react-email/ui": "^6.6.0",
     "@react-router/dev": "7.17.0",
     "@tailwindcss/vite": "^4.3.0",
     "@types/node": "^22",

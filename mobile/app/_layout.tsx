@@ -9,7 +9,9 @@ import { PostHogProvider, usePostHog } from "posthog-react-native";
 SplashScreen.preventAutoHideAsync();
 
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY || "";
-const POSTHOG_KEY = process.env.EXPO_PUBLIC_POSTHOG_KEY || "";
+// Treat the .env.example placeholder as unset so analytics stays off until a real key is provided
+const rawPosthogKey = process.env.EXPO_PUBLIC_POSTHOG_KEY || "";
+const POSTHOG_KEY = rawPosthogKey.startsWith("phc_xxx") ? "" : rawPosthogKey;
 const POSTHOG_HOST = process.env.EXPO_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com";
 
 // Token cache for Clerk
@@ -77,6 +79,7 @@ export default function RootLayout() {
       autocapture={false}
       options={{
         host: POSTHOG_HOST,
+        disabled: !POSTHOG_KEY,
         enableSessionReplay: true,
         sessionReplayConfig: {
           maskAllTextInputs: true,

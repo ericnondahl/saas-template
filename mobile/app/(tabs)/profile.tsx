@@ -14,7 +14,7 @@ import { UserDTO, ApiResponse } from "@saas-template/shared";
 import { UserProfile } from "../../components/UserProfile";
 import { unlatchSignedIn } from "../../lib/authGuard";
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:5173";
+const API_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000";
 
 export default function ProfileScreen() {
   const { user, isLoaded } = useUser();

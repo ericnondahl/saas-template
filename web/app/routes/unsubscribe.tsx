@@ -18,8 +18,7 @@ export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
   // One-click unsubscribe (RFC 8058) POSTs `List-Unsubscribe=One-Click` to the
   // link URL without our form fields, so fall back to the query param.
-  const token =
-    formData.get("token") ?? new URL(request.url).searchParams.get("token");
+  const token = formData.get("token") ?? new URL(request.url).searchParams.get("token");
   const userId = typeof token === "string" ? verifyUnsubscribeToken(token) : null;
 
   if (!userId) {

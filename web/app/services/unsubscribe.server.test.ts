@@ -52,7 +52,7 @@ describe("unsubscribe tokens", () => {
   });
 
   it("builds an unsubscribe URL containing the token", () => {
-    const url = new URL(createUnsubscribeUrl("http://localhost:5173", USER_ID));
+    const url = new URL(createUnsubscribeUrl("http://localhost:3000", USER_ID));
     expect(url.pathname).toBe("/unsubscribe");
     expect(verifyUnsubscribeToken(url.searchParams.get("token")!)).toBe(USER_ID);
   });

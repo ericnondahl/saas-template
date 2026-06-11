@@ -59,7 +59,7 @@ try {
   console.log("\nTo process these jobs, run the worker:");
   console.log("  npm run worker");
   console.log("\nOr view them in the admin panel:");
-  console.log("  http://localhost:5173/admin/queues");
+  console.log("  http://localhost:3000/admin/queues");
 } catch (error) {
   console.error("\nError:", error);
   await cleanup();
