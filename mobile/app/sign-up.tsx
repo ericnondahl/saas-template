@@ -13,6 +13,8 @@ import {
 import { useRouter, Link } from "expo-router";
 import { useSignUp, useAuth } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
+import { latchSignedIn } from "../lib/authGuard";
+import { markSignedInBefore } from "../lib/authStorage";
 
 // API URL for syncing user to database
 const API_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000";
@@ -121,6 +123,10 @@ export default function SignUpScreen() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
+        // Latch BEFORE navigating so the (tabs) guard can't bounce us back on
+        // a transient signed-out read — see lib/authGuard.ts.
+        latchSignedIn();
+        markSignedInBefore();
         // Sync user to database after successful verification
         await syncUserToDatabase();
         router.replace("/(tabs)");

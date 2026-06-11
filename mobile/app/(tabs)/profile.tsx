@@ -12,6 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
 import { UserDTO, ApiResponse } from "@saas-template/shared";
 import { UserProfile } from "../../components/UserProfile";
+import { unlatchSignedIn } from "../../lib/authGuard";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:5173";
 
@@ -71,7 +72,12 @@ export default function ProfileScreen() {
       {
         text: "Sign Out",
         style: "destructive",
-        onPress: () => signOut(),
+        onPress: () => {
+          // Drop the session latch first so the tabs guard doesn't treat the
+          // signed-out state as a transient flicker — see lib/authGuard.ts.
+          unlatchSignedIn();
+          signOut();
+        },
       },
     ]);
   };

@@ -88,6 +88,7 @@ export default function RootLayout() {
         <ClerkLoaded>
           <PostHogUserIdentifier>
             <Stack>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               <Stack.Screen name="sign-in" options={{ title: "Sign In" }} />
               <Stack.Screen name="sign-up" options={{ title: "Sign Up" }} />

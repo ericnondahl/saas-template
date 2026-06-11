@@ -15,6 +15,8 @@ import { useSignIn, useSSO, useAuth } from "@clerk/clerk-expo";
 import * as WebBrowser from "expo-web-browser";
 import * as Linking from "expo-linking";
 import { Ionicons } from "@expo/vector-icons";
+import { latchSignedIn } from "../lib/authGuard";
+import { markSignedInBefore } from "../lib/authStorage";
 
 // Required for OAuth to work properly on web - only call on web platform
 if (Platform.OS === "web") {
@@ -94,6 +96,18 @@ export default function SignInScreen() {
     }
   };
 
+  // Common post-setActive steps for every auth flow. Latch BEFORE navigating
+  // so the (tabs) guard can't bounce us back on a transient signed-out read
+  // while Clerk reloads resources — see lib/authGuard.ts.
+  const completeSignIn = async () => {
+    latchSignedIn();
+    // Remember this device has authenticated, so a later expired-session
+    // cold start routes to /sign-in rather than the new-install flow.
+    markSignedInBefore();
+    await syncUserToDatabase();
+    router.replace("/(tabs)");
+  };
+
   // Handle Google OAuth sign in using Clerk's hosted OAuth
   const handleGoogleSignIn = useCallback(async () => {
     try {
@@ -114,8 +128,7 @@ export default function SignInScreen() {
 
       if (result.createdSessionId) {
         await result.setActive!({ session: result.createdSessionId });
-        await syncUserToDatabase();
-        router.replace("/(tabs)");
+        await completeSignIn();
       } else if (result.signIn || result.signUp) {
         // Handle cases where additional steps might be needed
         console.log("OAuth requires additional steps");
@@ -156,9 +169,7 @@ export default function SignInScreen() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        // Sync user to database after successful sign-in
-        await syncUserToDatabase();
-        router.replace("/(tabs)");
+        await completeSignIn();
       } else if (result.status === "needs_first_factor") {
         // Need to complete first factor auth (e.g., password)
         // Try to prepare the first factor
@@ -171,8 +182,7 @@ export default function SignInScreen() {
 
           if (attemptResult.status === "complete") {
             await setActive({ session: attemptResult.createdSessionId });
-            await syncUserToDatabase();
-            router.replace("/(tabs)");
+            await completeSignIn();
           } else {
             console.log("First factor attempt result:", attemptResult);
             setError("Sign in requires additional verification");
@@ -233,8 +243,7 @@ export default function SignInScreen() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        await syncUserToDatabase();
-        router.replace("/(tabs)");
+        await completeSignIn();
       } else {
         setError("Verification incomplete. Please try again.");
       }
