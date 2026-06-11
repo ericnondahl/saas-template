@@ -427,7 +427,24 @@ Common fixes:
    - Mobile screens: Create files in `mobile/app/`
    - Shared types: Add to `packages/shared/src/types/`
 
-8. **Deploy Your App**
+8. **Set Up Mobile Builds (EAS)**
+   - Install the EAS CLI: `npm install -g eas-cli`, then `eas login`
+   - Run `eas init` in `mobile/` to link the app to your Expo project
+   - Fill in the placeholder env values in `mobile/eas.json` (`preview` and
+     `production` profiles): your production API URL, Clerk publishable key,
+     and PostHog key. These are baked into the binary at build time
+   - Build commands (from the repo root):
+     - `npm run build:ios` / `npm run build:android` — production builds on EAS
+     - `npm run submit:ios` / `npm run submit:android` — build + auto-submit to the stores
+     - `npm run build:ios:local` / `npm run build:android:local` — internal-distribution
+       builds on your own machine (`:dev` variants set `EXPO_PUBLIC_DEV_MODE=true`)
+   - If a cloud build hits a native toolchain mismatch, you can pin a builder
+     image per profile with the `image` field (see the [EAS docs](https://docs.expo.dev/build-reference/infrastructure/))
+   - To run the dev build on a physical device over Wi-Fi:
+     `npm run ios:device` / `npm run android:device` from `mobile/`
+     (macOS only — it advertises your Mac's LAN IP to Metro)
+
+9. **Deploy Your App**
    - See deployment section in README.md
 
 ---

@@ -21,8 +21,12 @@ Thank you for your interest in contributing to the SaaS Template!
 1. Make your changes
 2. Test your changes:
    - Web: `npm run dev:web`
-   - Mobile: `npm run dev:mobile`
+   - Mobile: `npm run dev:mobile` (or `npm run ios:device` / `npm run android:device`
+     from `mobile/` to run on a physical device over Wi-Fi — macOS only, it points
+     Metro at your Mac's LAN IP via `ipconfig getifaddr en0`)
    - Type check: `npm run typecheck`
+   - Tests: `npm run test`
+   - Everything at once: `npm run check` (format + typecheck + test + build)
 3. Commit your changes with clear messages
 4. Push to your fork
 5. Create a Pull Request
@@ -40,6 +44,7 @@ Thank you for your interest in contributing to the SaaS Template!
 Before submitting a PR, ensure:
 
 - [ ] Type checking passes: `npm run typecheck`
+- [ ] Tests pass: `npm run test`
 - [ ] Web app runs without errors
 - [ ] Mobile app runs without errors
 - [ ] No console errors or warnings

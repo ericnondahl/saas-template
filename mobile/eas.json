@@ -1,0 +1,49 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": false
+      }
+    },
+    "preview-dev": {
+      "extends": "preview",
+      "env": {
+        "EXPO_PUBLIC_DEV_MODE": "true"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "ios": {
+        "simulator": false
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://your-production-domain.com",
+        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_replace_with_your_clerk_key",
+        "EXPO_PUBLIC_POSTHOG_KEY": "phc_replace_with_your_posthog_key",
+        "EXPO_PUBLIC_POSTHOG_HOST": "https://us.i.posthog.com"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://your-production-domain.com",
+        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_live_replace_with_your_clerk_key",
+        "EXPO_PUBLIC_POSTHOG_KEY": "phc_replace_with_your_posthog_key",
+        "EXPO_PUBLIC_POSTHOG_HOST": "https://us.i.posthog.com"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "android": {
+        "track": "internal"
+      }
+    }
+  }
+}

@@ -6,6 +6,8 @@
     "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
+    "ios:device": "REACT_NATIVE_PACKAGER_HOSTNAME=$(ipconfig getifaddr en0) expo run:ios --device",
+    "android:device": "REACT_NATIVE_PACKAGER_HOSTNAME=$(ipconfig getifaddr en0) expo run:android --device",
     "prebuild": "expo prebuild",
     "test": "vitest run",
     "test:watch": "vitest",
