@@ -15,17 +15,10 @@ import * as React from "react";
 
 interface WelcomeEmailProps {
   firstName?: string;
-  email: string;
-  appUrl?: string;
+  unsubscribeUrl?: string;
 }
 
-export const WelcomeEmail = ({
-  firstName = "there",
-  email,
-  appUrl = "http://localhost:5173",
-}: WelcomeEmailProps) => {
-  const unsubscribeUrl = `${appUrl}/unsubscribe?email=${encodeURIComponent(email)}`;
-
+export const WelcomeEmail = ({ firstName = "there", unsubscribeUrl }: WelcomeEmailProps) => {
   return (
     <Html>
       <Head />
@@ -81,10 +74,14 @@ export const WelcomeEmail = ({
               <Link href="#" style={link}>
                 Contact Us
               </Link>
-              {" · "}
-              <Link href={unsubscribeUrl} style={link}>
-                Unsubscribe
-              </Link>
+              {unsubscribeUrl && (
+                <>
+                  {" · "}
+                  <Link href={unsubscribeUrl} style={link}>
+                    Unsubscribe
+                  </Link>
+                </>
+              )}
             </Text>
 
             <Text style={footerCopyright}>
@@ -96,6 +93,11 @@ export const WelcomeEmail = ({
     </Html>
   );
 };
+
+WelcomeEmail.PreviewProps = {
+  firstName: "Jane",
+  unsubscribeUrl: "http://localhost:5173/unsubscribe?token=preview",
+} satisfies WelcomeEmailProps;
 
 export default WelcomeEmail;
 

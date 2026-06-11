@@ -2,6 +2,7 @@ import { Resend } from "resend";
 import { render } from "@react-email/components";
 import WelcomeEmail from "../emails/WelcomeEmail";
 import { db } from "./db.server";
+import { createUnsubscribeUrl } from "./unsubscribe.server";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -14,7 +15,7 @@ export async function sendWelcomeEmail(email: string, firstName?: string | null)
   // Check if user exists and is subscribed
   const user = await db.user.findUnique({
     where: { email },
-    select: { emailSubscribed: true },
+    select: { id: true, emailSubscribed: true },
   });
 
   if (user && !user.emailSubscribed) {
@@ -31,11 +32,14 @@ export async function sendWelcomeEmail(email: string, firstName?: string | null)
 
   const appUrl = process.env.APP_URL || "http://localhost:5173";
 
+  // Signed, single-purpose unsubscribe link — the raw email never appears in
+  // the URL. Only possible when the recipient has a user record.
+  const unsubscribeUrl = user ? createUnsubscribeUrl(appUrl, user.id) : undefined;
+
   const html = await render(
     WelcomeEmail({
       firstName: firstName || undefined,
-      email,
-      appUrl,
+      unsubscribeUrl,
     })
   );
 
@@ -44,6 +48,13 @@ export async function sendWelcomeEmail(email: string, firstName?: string | null)
     to: email,
     subject: "Welcome to Our App!",
     html,
+    // RFC 8058 one-click unsubscribe for mail clients that support it
+    headers: unsubscribeUrl
+      ? {
+          "List-Unsubscribe": `<${unsubscribeUrl}>`,
+          "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        }
+      : undefined,
   });
 
   if (error) {
