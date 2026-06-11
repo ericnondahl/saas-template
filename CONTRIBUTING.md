@@ -6,27 +6,28 @@ Thank you for your interest in contributing to the SaaS Template!
 
 1. Fork the repository
 2. Clone your fork: `git clone <your-fork-url>`
-3. Follow the [QUICKSTART.md](./QUICKSTART.md) guide
+3. Follow the Getting Started guide in [README.md](./README.md)
 4. Create a new branch: `git checkout -b feature/your-feature-name`
 
 ## Project Structure
 
-- `web/` - React Router 7 web application
+There is no root `package.json` — `web/`, `mobile/`, and `packages/shared/` are independent npm projects. `cd` into the one you're working on to run commands.
+
+- `web/` - React Router 7 web application (owns the Prisma schema in `web/prisma/`)
 - `mobile/` - Expo React Native mobile application
 - `packages/shared/` - Shared TypeScript types
-- `prisma/` - Database schema and migrations
 
 ## Development Workflow
 
 1. Make your changes
-2. Test your changes:
-   - Web: `npm run dev:web`
-   - Mobile: `npm run dev:mobile` (or `npm run ios:device` / `npm run android:device`
-     from `mobile/` to run on a physical device over Wi-Fi — macOS only, it points
+2. Test your changes from the relevant project directory:
+   - Web: `cd web && npm run dev`
+   - Mobile: `cd mobile && npm start` (or `npm run ios:device` / `npm run android:device`
+     to run on a physical device over Wi-Fi — macOS only, it points
      Metro at your Mac's LAN IP via `ipconfig getifaddr en0`)
    - Type check: `npm run typecheck`
    - Tests: `npm run test`
-   - Everything at once: `npm run check` (format + typecheck + test + build)
+   - Everything at once: `npm run check` (format + typecheck + test, plus build in `web/`)
 3. Commit your changes with clear messages
 4. Push to your fork
 5. Create a Pull Request
@@ -43,8 +44,8 @@ Thank you for your interest in contributing to the SaaS Template!
 
 Before submitting a PR, ensure:
 
-- [ ] Type checking passes: `npm run typecheck`
-- [ ] Tests pass: `npm run test`
+- [ ] Type checking passes: `npm run typecheck` (in each project you touched)
+- [ ] Tests pass: `npm run test` (in each project you touched)
 - [ ] Web app runs without errors
 - [ ] Mobile app runs without errors
 - [ ] No console errors or warnings
@@ -120,14 +121,13 @@ export async function doSomething(param: string): Promise<Result> {
 
 When modifying the database schema:
 
-1. Edit `prisma/schema.prisma`
-2. Create a migration: `npm run db:migrate`
+1. Edit `web/prisma/schema.prisma`
+2. Create a migration: `cd web && npm run db:migrate`
 3. Update types in `packages/shared/src/types/`
 4. Test with both web and mobile apps
 
 ## Adding Dependencies
 
-- Add shared dependencies to root `package.json`
 - Add web-specific deps to `web/package.json`
 - Add mobile-specific deps to `mobile/package.json`
 - Add shared package deps to `packages/shared/package.json`
@@ -136,9 +136,8 @@ Always specify version ranges appropriately.
 
 ## Documentation
 
-- Update README.md for major features
+- Update README.md for major features and setup changes
 - Add inline comments for complex logic
-- Update QUICKSTART.md if setup process changes
 - Add examples for new features
 
 ## Questions?

@@ -44,7 +44,7 @@ You'll deploy 4 services:
 
 Click on the web service → **Settings** tab:
 
-- **Watch Paths**: `web/**`, `prisma/**`, `packages/**`
+- **Watch Paths**: `web/**`, `packages/**`
 - This ensures rebuilds only trigger when relevant files change
 
 ## Step 5: Deploy Worker Service
@@ -59,7 +59,7 @@ Click on the web service → **Settings** tab:
 
 ### Worker Service Settings
 
-Same watch paths as web: `web/**`, `prisma/**`, `packages/**`
+Same watch paths as web: `web/**`, `packages/**`
 
 ## Step 6: Configure Environment Variables
 
@@ -127,10 +127,10 @@ After the first deploy, you need to run Prisma migrations.
 1. Install Railway CLI: `npm install -g @railway/cli`
 2. Login: `railway login`
 3. Link to your project: `railway link`
-4. Run migrations against the web service:
+4. Run migrations against the web service (from `web/`, where the Prisma schema lives):
 
 ```bash
-railway run -s web npx prisma migrate deploy
+cd web && railway run -s web npx prisma migrate deploy
 ```
 
 ### Option B: Railway Shell
@@ -195,7 +195,7 @@ Ensure you're using the Railway reference variable `${{Postgres.DATABASE_URL}}` 
 Run migrations manually via Railway CLI:
 
 ```bash
-railway run -s web npx prisma migrate deploy
+cd web && railway run -s web npx prisma migrate deploy
 ```
 
 ## Local Development with Railway
@@ -208,8 +208,8 @@ DATABASE_URL=postgresql://...
 REDIS_URL=redis://...
 ```
 
-Or use the local Docker setup:
+Or use the local Docker setup (from the repo root):
 
 ```bash
-npm run docker:up
+docker compose up -d
 ```

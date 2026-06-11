@@ -4,7 +4,7 @@ A production-ready full-stack SaaS template with React Router 7 (SSR), Expo Reac
 
 ## 🚀 Features
 
-- **Monorepo Structure** - Organized with workspaces for web, mobile, and shared packages
+- **Standalone Projects** - Separate web and mobile projects that reference a shared package — no root workspace. `cd` into `web/` or `mobile/` to work on each app
 - **React Router 7** - Modern web framework with server-side rendering
 - **Expo React Native** - Cross-platform mobile app with custom native code support
 - **Shared Types** - TypeScript types shared between web and mobile
@@ -23,25 +23,27 @@ A production-ready full-stack SaaS template with React Router 7 (SSR), Expo Reac
 
 ```
 saas-template/
-├── web/                      # React Router 7 web app
+├── web/                      # React Router 7 web app (standalone project)
 │   ├── app/
 │   │   ├── routes/          # File-based routing
 │   │   ├── services/        # Service layer (auth, db, cache)
 │   │   └── root.tsx
+│   ├── prisma/
+│   │   └── schema.prisma    # Database schema
 │   └── package.json
-├── mobile/                   # Expo React Native app
+├── mobile/                   # Expo React Native app (standalone project)
 │   ├── app/                 # Expo Router
 │   │   ├── (tabs)/         # Tab navigation
 │   │   └── _layout.tsx
-│   └── package.json
+│   └── package.json         # depends on ../packages/shared via file:
 ├── packages/
-│   └── shared/              # Shared TypeScript types
+│   └── shared/              # Shared TypeScript types (standalone project)
 │       └── src/types/
-├── prisma/
-│   └── schema.prisma        # Database schema
-├── docker-compose.yml       # Local services
-└── package.json             # Root workspace
+├── docker-compose.yml       # Local services (Postgres + Redis)
+└── tsconfig.base.json       # Shared TypeScript config
 ```
+
+There is no root `package.json` — `web/`, `mobile/`, and `packages/shared/` are independent npm projects. `cd` into the one you're working on to install dependencies and run commands. Both apps reference the shared package directly: web via a tsconfig path alias, mobile via a `file:../packages/shared` dependency.
 
 ## 🛠️ Getting Started
 
@@ -60,10 +62,12 @@ git clone <your-repo-url>
 cd saas-template
 ```
 
-2. **Install dependencies**
+2. **Install dependencies** (each project is independent)
 
 ```bash
-npm run install:all
+cd web && npm install && cd ..
+cd mobile && npm install && cd ..
+cd packages/shared && npm install && cd ../..
 ```
 
 3. **Set up environment variables**
@@ -78,23 +82,38 @@ cp web/.env.example web/.env
 cp mobile/.env.example mobile/.env
 ```
 
-Get your API keys from:
+**Clerk (required):**
 
-- Clerk: [clerk.com](https://clerk.com)
-- Resend (optional, for emails): [resend.com](https://resend.com)
-- PostHog (optional, for analytics): [posthog.com](https://posthog.com)
+1. Create an application at [clerk.com](https://clerk.com)
+2. Copy the Publishable Key (`pk_test_...`) into both `web/.env` and `mobile/.env`
+3. Copy the Secret Key (`sk_test_...`) into `web/.env`
+4. For social login, enable **Google** and **Apple** under SSO connections.
+   Apple Sign-In is required by App Store policy if you offer any other
+   third-party login on iOS; the mobile app uses the native Apple flow so the
+   user's name is captured on first authorization (Clerk's dev keys work out
+   of the box — production needs an Apple Services ID configured in Clerk)
 
-4. **Start Docker services**
+**Optional services** (add the keys to `web/.env` unless noted):
+
+- Resend (emails): `RESEND_API_KEY=re_...` from [resend.com](https://resend.com)
+- OpenRouter (AI): `OPENROUTER_API_KEY=sk-or-...` from [openrouter.ai](https://openrouter.ai)
+- PostHog (analytics): `VITE_POSTHOG_KEY` / `VITE_POSTHOG_HOST` in `web/.env`,
+  `EXPO_PUBLIC_POSTHOG_KEY` / `EXPO_PUBLIC_POSTHOG_HOST` in `mobile/.env`,
+  from [posthog.com](https://posthog.com)
+
+4. **Start Docker services** (from the repo root)
 
 ```bash
-npm run docker:up
+docker compose up -d
 ```
 
-This starts PostgreSQL and Redis containers.
+This starts PostgreSQL and Redis containers (`saas-postgres` and `saas-redis`).
 
 5. **Initialize the database**
 
 ```bash
+cd web
+
 # Generate Prisma client
 npm run db:generate
 
@@ -107,7 +126,7 @@ npm run db:migrate
 **Web Application:**
 
 ```bash
-npm run dev:web
+cd web && npm run dev
 ```
 
 Visit http://localhost:3000
@@ -115,7 +134,7 @@ Visit http://localhost:3000
 **Mobile Application:**
 
 ```bash
-npm run dev:mobile
+cd mobile && npm start
 ```
 
 Then use the Expo Go app or run on a simulator:
@@ -130,19 +149,7 @@ cd mobile && npm run android
 
 ## 📝 Available Scripts
 
-### Root Level
-
-- `npm run install:all` - Install all dependencies
-- `npm run build` - Build all apps
-- `npm run dev:web` - Start web dev server
-- `npm run dev:mobile` - Start mobile dev server
-- `npm run worker` - Start BullMQ job worker
-- `npm run typecheck` - Type check all packages
-- `npm run db:generate` - Generate Prisma client
-- `npm run db:migrate` - Run database migrations
-- `npm run db:studio` - Open Prisma Studio
-- `npm run docker:up` - Start Docker services
-- `npm run docker:down` - Stop Docker services
+There are no root-level scripts — run commands from the project you're working on.
 
 ### Web App (in `web/`)
 
@@ -150,17 +157,32 @@ cd mobile && npm run android
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run worker` - Start BullMQ job worker
+- `npm run typecheck` - Type check
+- `npm run test` - Run tests
+- `npm run check` - Format + typecheck + test + build
+- `npm run db:generate` - Generate Prisma client
+- `npm run db:migrate` - Run database migrations
+- `npm run db:studio` - Open Prisma Studio
+- `npm run email:dev` - Preview email templates
 
 ### Mobile App (in `mobile/`)
 
 - `npm start` - Start Expo dev server
-- `npm run ios` - Run on iOS simulator
-- `npm run android` - Run on Android emulator
+- `npm run ios` / `npm run android` - Run on simulator/emulator
+- `npm run ios:device` / `npm run android:device` - Run on a physical device over Wi-Fi (macOS only)
 - `npm run prebuild` - Generate native code
+- `npm run typecheck` - Type check
+- `npm run test` - Run tests
+- `npm run check` - Format + typecheck + test
+- `npm run build:ios` / `npm run build:android` - Production builds on EAS
+- `npm run submit:ios` / `npm run submit:android` - Build + auto-submit to the stores
+- `npm run build:ios:local` / `npm run build:android:local` - Internal-distribution builds on your machine (`:dev` variants set `EXPO_PUBLIC_DEV_MODE=true`)
 
 ### Shared Package (in `packages/shared/`)
 
 - `npm run typecheck` - Type check shared code
+- `npm run test` - Run tests
+- `npm run check` - Format + typecheck + test
 
 Note: The shared package uses direct source imports (no build step required). Changes are immediately available in web and mobile apps.
 
@@ -229,9 +251,11 @@ The template includes a built-in admin panel at `/admin` with:
   - Job details with data, timestamps, and error info
   - Filter by queue and job status
 
+To grant yourself admin access: open Prisma Studio (`cd web && npm run db:studio`), find your user in the User table, and set `isAdmin: true`.
+
 ### Database Schema
 
-See `prisma/schema.prisma` for the database schema. Example models:
+See `web/prisma/schema.prisma` for the database schema. Example models:
 
 - **User** - Synced with Clerk authentication
 
@@ -259,9 +283,11 @@ The mobile app uses `@clerk/clerk-expo` with secure token storage.
 
 ## 🗄️ Database
 
-PostgreSQL database with Prisma ORM:
+PostgreSQL database with Prisma ORM. The schema and migrations live in `web/prisma/`, and all Prisma commands run from `web/`:
 
 ```bash
+cd web
+
 # Create a new migration
 npx prisma migrate dev --name your_migration_name
 
@@ -272,7 +298,7 @@ npx prisma migrate reset
 npm run db:studio
 ```
 
-**Note:** All Prisma commands automatically load environment variables from `web/.env`, so make sure that file has your `DATABASE_URL` configured.
+**Note:** The Prisma CLI automatically loads environment variables from `web/.env`, so make sure that file has your `DATABASE_URL` configured.
 
 ## 📋 Job Queues
 
@@ -283,10 +309,6 @@ The template includes BullMQ for background job processing with Redis:
 **Standalone mode (recommended for production):**
 
 ```bash
-# From root
-npm run worker
-
-# Or from web directory
 cd web && npm run worker
 ```
 
@@ -295,8 +317,10 @@ cd web && npm run worker
 Set `RUN_WORKER=true` environment variable to start the worker with the web server:
 
 ```bash
-RUN_WORKER=true npm run dev:web
+cd web && RUN_WORKER=true npm run dev
 ```
+
+To exercise the queue end to end: `cd web && npx tsx scripts/test-queue.ts` queues test jobs for all users, then start the worker to process them and watch them in the admin panel at `/admin/queues`.
 
 ### Creating Jobs
 
@@ -320,7 +344,7 @@ await testQueue.add("job-name", {
 ### Deployment Options
 
 - **Same service:** Set `RUN_WORKER=true` to run worker inline with web server
-- **Separate service:** Run `npm run worker` as a dedicated service (recommended for scale)
+- **Separate service:** Run `npm run worker` (from `web/`) as a dedicated service (recommended for scale)
 
 Both options use the same Redis instance configured via `REDIS_URL`.
 
@@ -356,24 +380,57 @@ Make sure to:
 
 1. Set environment variables
 2. Run database migrations
-3. Build the app with `npm run build`
+3. Build the app with `cd web && npm run build`
+
+See [RAILWAY.md](./RAILWAY.md) for a step-by-step Railway deployment guide.
 
 ### Mobile App
 
 Use [EAS Build](https://docs.expo.dev/build/introduction/) for iOS and Android:
 
+1. Install the EAS CLI: `npm install -g eas-cli`, then `eas login`
+2. Run `eas init` in `mobile/` to link the app to your Expo project
+3. Fill in the placeholder env values in `mobile/eas.json` (`preview` and
+   `production` profiles): your production API URL, Clerk publishable key,
+   and PostHog key. These are baked into the binary at build time
+4. Build from `mobile/`:
+   - `npm run build:ios` / `npm run build:android` — production builds on EAS
+   - `npm run submit:ios` / `npm run submit:android` — build + auto-submit to the stores
+   - `npm run build:ios:local` / `npm run build:android:local` — internal-distribution
+     builds on your own machine (`:dev` variants set `EXPO_PUBLIC_DEV_MODE=true`)
+5. If a cloud build hits a native toolchain mismatch, you can pin a builder
+   image per profile with the `image` field (see the [EAS docs](https://docs.expo.dev/build-reference/infrastructure/))
+
+## 🧪 Checks & Tests
+
+Each project has its own gate — run it in the project you changed:
+
 ```bash
-npm install -g eas-cli
-eas build --platform all
-eas submit --platform all
+cd web && npm run check              # format + typecheck + test + build
+cd mobile && npm run check           # format + typecheck + test
+cd packages/shared && npm run check  # format + typecheck + test
 ```
 
-## 🧪 Type Checking
+Handy test scripts for the optional services (run from `web/`):
 
-Run type checking across all packages:
+- `npx tsx scripts/test-welcome-email.ts` — send a test email via Resend
+- `npx tsx scripts/test-openrouter.ts` — exercise the OpenRouter AI service
+- `npx tsx scripts/test-queue.ts` — queue test jobs for BullMQ
+
+## 🔧 Troubleshooting
+
+**Port already in use:** kill the process (`lsof -ti:3000 | xargs kill`) or restart the Docker services (`docker compose down && docker compose up -d` from the repo root).
+
+**"Prisma Client not found":** run `cd web && npm run db:generate`.
+
+**"Module not found: @saas-template/shared":** make sure dependencies are installed in the project that errors (`npm install` in `web/` or `mobile/`), then restart your IDE's TypeScript server. Web resolves the package via a tsconfig path alias; mobile via a `file:../packages/shared` dependency.
+
+**Reset Docker volumes** (destroys local data):
 
 ```bash
-npm run typecheck
+docker compose down
+docker volume rm saas-template_postgres_data saas-template_redis_data
+docker compose up -d
 ```
 
 ## 📚 Documentation
