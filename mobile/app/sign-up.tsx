@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { useRouter, Link } from "expo-router";
 import { useSignUp, useAuth } from "@clerk/clerk-expo";
+import * as Application from "expo-application";
 import { Ionicons } from "@expo/vector-icons";
 import { latchSignedIn } from "../lib/authGuard";
 import { markSignedInBefore } from "../lib/authStorage";
@@ -49,6 +50,11 @@ export default function SignUpScreen() {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          platform: Platform.OS,
+          clientVersion: Application.nativeApplicationVersion ?? undefined,
+        }),
       });
 
       if (!response.ok) {

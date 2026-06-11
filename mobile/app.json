@@ -15,7 +15,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.saastemplate.app"
+      "bundleIdentifier": "com.saastemplate.app",
+      "usesAppleSignIn": true
     },
     "android": {
       "adaptiveIcon": {
@@ -45,7 +46,8 @@
       ],
       "./plugins/withExpoAutolinking",
       "./plugins/withKotlinVersion",
-      "expo-localization"
+      "expo-localization",
+      "expo-apple-authentication"
     ],
     "experiments": {
       "typedRoutes": true

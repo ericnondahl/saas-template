@@ -11,11 +11,18 @@ interface ClerkUser {
   imageUrl: string;
 }
 
+/** Optional client context sent alongside a sync (mobile sends these). */
+interface SyncOptions {
+  timezone?: string;
+  platform?: string;
+  clientVersion?: string;
+}
+
 /**
  * Syncs a Clerk user to the database.
  * Creates the user if they don't exist, or updates their info if they do.
  */
-export async function syncUser(clerkUser: ClerkUser) {
+export async function syncUser(clerkUser: ClerkUser, options: SyncOptions = {}) {
   const email = clerkUser.emailAddresses[0]?.emailAddress;
 
   if (!email) {
@@ -29,6 +36,14 @@ export async function syncUser(clerkUser: ClerkUser) {
 
   const isNewUser = !existingUser;
 
+  // Only set client-context fields when the client sent them, so a sync from
+  // a client that omits them doesn't blank out previously stored values.
+  const clientContext = {
+    ...(options.timezone ? { timezone: options.timezone } : {}),
+    ...(options.platform ? { platform: options.platform } : {}),
+    ...(options.clientVersion ? { clientVersion: options.clientVersion } : {}),
+  };
+
   const user = await db.user.upsert({
     where: { clerkId: clerkUser.id },
     create: {
@@ -37,12 +52,14 @@ export async function syncUser(clerkUser: ClerkUser) {
       firstName: clerkUser.firstName,
       lastName: clerkUser.lastName,
       imageUrl: clerkUser.imageUrl,
+      ...clientContext,
     },
     update: {
       email,
       firstName: clerkUser.firstName,
       lastName: clerkUser.lastName,
       imageUrl: clerkUser.imageUrl,
+      ...clientContext,
     },
   });
 

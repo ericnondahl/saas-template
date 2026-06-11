@@ -36,6 +36,11 @@ Copy-Item mobile\.env.example mobile\.env
 2. Create a new application
 3. Copy your Publishable Key (starts with `pk_test_`)
 4. Copy your Secret Key (starts with `sk_test_`)
+5. For social login, enable **Google** and **Apple** under SSO connections.
+   Apple Sign-In is required by App Store policy if you offer any other
+   third-party login on iOS; the mobile app uses the native Apple flow so the
+   user's name is captured on first authorization (Clerk's dev keys work out
+   of the box — production needs an Apple Services ID configured in Clerk)
 
 **Resend (Optional, for emails):**
 
