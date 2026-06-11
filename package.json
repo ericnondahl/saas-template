@@ -13,9 +13,10 @@
     "dev:web": "cd web && npm run dev",
     "dev:mobile": "npm run start --workspace=mobile",
     "worker": "cd web && npm run worker",
-    "test": "cd web && npm run test",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "typecheck": "cd web && npm run typecheck && cd .. && npm run typecheck --workspace=mobile",
-    "check": "npm run db:generate && npm run format && npm run typecheck",
+    "check": "npm run format && npm run typecheck && npm run test && npm run build",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "db:generate": "dotenv -e web/.env -- prisma generate",
@@ -31,7 +32,8 @@
     "dotenv-cli": "^11.0.0",
     "prettier": "^3.2.5",
     "prisma": "^5.9.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^4.0.18"
   },
   "dependencies": {
     "@prisma/client": "^5.9.0"
