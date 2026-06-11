@@ -51,7 +51,7 @@ export default function ProfileScreen() {
         },
       });
 
-      const data: ApiResponse<UserDTO> = await response.json();
+      const data = (await response.json()) as ApiResponse<UserDTO>;
 
       if (data.success && data.data) {
         setUserData(data.data);

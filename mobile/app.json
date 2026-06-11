@@ -7,12 +7,6 @@
     "icon": "./assets/icon.png",
     "scheme": "saastemplate",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.saastemplate.app",
@@ -33,6 +27,14 @@
     "plugins": [
       "expo-router",
       [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
+      [
         "expo-dev-client",
         {
           "addGeneratedScheme": false
@@ -44,8 +46,6 @@
           "createTask": false
         }
       ],
-      "./plugins/withExpoAutolinking",
-      "./plugins/withKotlinVersion",
       "expo-localization",
       "expo-apple-authentication"
     ],
