@@ -16,7 +16,7 @@ export function meta({}: Route.MetaArgs) {
     {
       name: "keywords",
       content:
-        "saas template, saas boilerplate, react template, typescript starter, clerk auth, prisma, tailwind css, production ready, startup template",
+        "saas template, saas boilerplate, react template, typescript starter, clerk auth, drizzle, tailwind css, production ready, startup template",
     },
     { name: "author", content: "SaaS Template" },
     { name: "robots", content: "index, follow" },

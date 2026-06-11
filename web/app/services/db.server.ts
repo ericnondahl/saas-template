@@ -1,13 +1,17 @@
-import { PrismaClient } from "@prisma/client";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
+import * as schema from "../db/schema";
 
 declare global {
   // eslint-disable-next-line no-var
-  var __prisma: PrismaClient | undefined;
+  var __pgPool: Pool | undefined;
 }
 
-// Prevent multiple instances during hot reload in development
-export const db = globalThis.__prisma ?? new PrismaClient();
+// Prevent multiple pools during hot reload in development
+const pool = globalThis.__pgPool ?? new Pool({ connectionString: process.env.DATABASE_URL });
 
 if (process.env.NODE_ENV !== "production") {
-  globalThis.__prisma = db;
+  globalThis.__pgPool = pool;
 }
+
+export const db = drizzle(pool, { schema });

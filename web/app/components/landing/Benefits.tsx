@@ -22,7 +22,7 @@ const techStack = [
   "React Router 7",
   "TypeScript",
   "Tailwind CSS",
-  "Prisma",
+  "Drizzle",
   "PostgreSQL",
   "Redis",
   "Clerk",

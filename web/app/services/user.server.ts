@@ -1,6 +1,7 @@
+import { eq } from "drizzle-orm";
 import { db } from "./db.server";
 import type { UserDTO } from "@saas-template/shared";
-import type { User as PrismaUser } from "@prisma/client";
+import { users, type User } from "../db/schema";
 import { sendWelcomeEmail } from "./email.server";
 
 interface ClerkUser {
@@ -30,8 +31,8 @@ export async function syncUser(clerkUser: ClerkUser, options: SyncOptions = {}) 
   }
 
   // Check if user exists
-  const existingUser = await db.user.findUnique({
-    where: { clerkId: clerkUser.id },
+  const existingUser = await db.query.users.findFirst({
+    where: eq(users.clerkId, clerkUser.id),
   });
 
   const isNewUser = !existingUser;
@@ -44,24 +45,28 @@ export async function syncUser(clerkUser: ClerkUser, options: SyncOptions = {}) 
     ...(options.clientVersion ? { clientVersion: options.clientVersion } : {}),
   };
 
-  const user = await db.user.upsert({
-    where: { clerkId: clerkUser.id },
-    create: {
+  const [user] = await db
+    .insert(users)
+    .values({
       clerkId: clerkUser.id,
       email,
       firstName: clerkUser.firstName,
       lastName: clerkUser.lastName,
       imageUrl: clerkUser.imageUrl,
       ...clientContext,
-    },
-    update: {
-      email,
-      firstName: clerkUser.firstName,
-      lastName: clerkUser.lastName,
-      imageUrl: clerkUser.imageUrl,
-      ...clientContext,
-    },
-  });
+    })
+    .onConflictDoUpdate({
+      target: users.clerkId,
+      set: {
+        email,
+        firstName: clerkUser.firstName,
+        lastName: clerkUser.lastName,
+        imageUrl: clerkUser.imageUrl,
+        ...clientContext,
+        updatedAt: new Date(),
+      },
+    })
+    .returning();
 
   // Send welcome email to new users
   if (isNewUser) {
@@ -80,15 +85,16 @@ export async function syncUser(clerkUser: ClerkUser, options: SyncOptions = {}) 
  * Gets a user from the database by their Clerk ID.
  */
 export async function getUserByClerkId(clerkId: string) {
-  return db.user.findUnique({
-    where: { clerkId },
+  const user = await db.query.users.findFirst({
+    where: eq(users.clerkId, clerkId),
   });
+  return user ?? null;
 }
 
 /**
- * Converts a Prisma User to a UserDTO (without timestamps).
+ * Converts a User row to a UserDTO (without timestamps).
  */
-export function userToDTO(user: PrismaUser): UserDTO {
+export function userToDTO(user: User): UserDTO {
   return {
     id: user.id,
     clerkId: user.clerkId,

@@ -38,9 +38,6 @@ yarn-error.log*
 logs/
 *.log
 
-# Prisma
-!prisma/migrations/.gitkeep
-
 # React Router
 .react-router/
 

@@ -12,9 +12,6 @@ build/
 .expo/
 .expo-shared/
 
-# Prisma
-prisma/migrations/
-
 # Lock files
 package-lock.json
 npm-debug.log*

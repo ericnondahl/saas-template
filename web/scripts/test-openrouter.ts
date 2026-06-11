@@ -61,5 +61,5 @@ await cleanup();
 
 async function cleanup() {
   await disconnectCache();
-  await db.$disconnect();
+  await db.$client.end();
 }

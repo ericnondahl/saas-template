@@ -1,7 +1,9 @@
 import { Resend } from "resend";
 import { render } from "@react-email/components";
 import WelcomeEmail from "../emails/WelcomeEmail";
+import { eq } from "drizzle-orm";
 import { db } from "./db.server";
+import { users } from "../db/schema";
 import { createUnsubscribeUrl } from "./unsubscribe.server";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
@@ -13,9 +15,9 @@ const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KE
  */
 export async function sendWelcomeEmail(email: string, firstName?: string | null) {
   // Check if user exists and is subscribed
-  const user = await db.user.findUnique({
-    where: { email },
-    select: { id: true, emailSubscribed: true },
+  const user = await db.query.users.findFirst({
+    where: eq(users.email, email),
+    columns: { id: true, emailSubscribed: true },
   });
 
   if (user && !user.emailSubscribed) {

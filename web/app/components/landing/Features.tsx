@@ -19,7 +19,7 @@ const features = [
   {
     title: "Database & ORM",
     description:
-      "Prisma ORM with PostgreSQL. Type-safe queries, migrations, and a beautiful admin interface.",
+      "Drizzle ORM with PostgreSQL. Type-safe queries, schema push, and a built-in studio.",
     icon: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path

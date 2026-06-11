@@ -1,6 +1,8 @@
+import { eq } from "drizzle-orm";
 import type { ApiResponse } from "@saas-template/shared";
 import { requireAdminAuth } from "../services/admin.server";
 import { db } from "../services/db.server";
+import { users } from "../db/schema";
 
 interface SetAdminRequest {
   userId: string;
@@ -51,11 +53,24 @@ export async function action(args: any) {
   }
 
   // Update user's admin status
-  const updatedUser = await db.user.update({
-    where: { id: body.userId },
-    data: { isAdmin: body.isAdmin },
-    select: { id: true, isAdmin: true },
-  });
+  const [updatedUser] = await db
+    .update(users)
+    .set({ isAdmin: body.isAdmin })
+    .where(eq(users.id, body.userId))
+    .returning({ id: users.id, isAdmin: users.isAdmin });
+
+  if (!updatedUser) {
+    return Response.json(
+      {
+        success: false,
+        error: {
+          code: "NOT_FOUND",
+          message: "User not found",
+        },
+      } as ApiResponse,
+      { status: 404 }
+    );
+  }
 
   return Response.json({
     success: true,

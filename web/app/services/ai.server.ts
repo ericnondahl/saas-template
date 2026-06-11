@@ -5,6 +5,7 @@
 
 import { OpenRouter } from "@openrouter/sdk";
 import { db } from "./db.server";
+import { openRouterLogs } from "../db/schema";
 import * as cache from "./cache.server";
 
 // Initialize OpenRouter client
@@ -150,19 +151,17 @@ async function logApiCall(
   totalCost: number
 ): Promise<void> {
   try {
-    // Using type assertion as Prisma types may need TS server restart to pick up new models
-    await db.openRouterLog.create({
-      data: {
-        model,
-        inputText,
-        outputText,
-        inputTokens,
-        outputTokens,
-        totalTokens,
-        inputCost,
-        outputCost,
-        totalCost,
-      },
+    // numeric columns expect string values
+    await db.insert(openRouterLogs).values({
+      model,
+      inputText,
+      outputText,
+      inputTokens,
+      outputTokens,
+      totalTokens,
+      inputCost: inputCost.toFixed(8),
+      outputCost: outputCost.toFixed(8),
+      totalCost: totalCost.toFixed(8),
     });
   } catch (error) {
     console.error("Failed to log OpenRouter API call:", error);

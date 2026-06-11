@@ -1,6 +1,6 @@
 # SaaS Template
 
-A production-ready full-stack SaaS template with React Router 7 (SSR), Expo React Native, Clerk authentication, Prisma ORM, and Redis caching.
+A production-ready full-stack SaaS template with React Router 7 (SSR), Expo React Native, Clerk authentication, Drizzle ORM, and Redis caching.
 
 ## 🚀 Features
 
@@ -9,7 +9,7 @@ A production-ready full-stack SaaS template with React Router 7 (SSR), Expo Reac
 - **Expo React Native** - Cross-platform mobile app with custom native code support
 - **Shared Types** - TypeScript types shared between web and mobile
 - **Clerk Authentication** - Secure user authentication out of the box
-- **Prisma ORM** - Type-safe database access
+- **Drizzle ORM** - Type-safe database access
 - **Redis Caching** - High-performance caching layer
 - **BullMQ Job Queues** - Background job processing with Redis-backed queues and admin monitoring
 - **OpenRouter AI** - AI/LLM integration with 300+ models, usage tracking, and cost monitoring
@@ -25,11 +25,12 @@ A production-ready full-stack SaaS template with React Router 7 (SSR), Expo Reac
 saas-template/
 ├── web/                      # React Router 7 web app (standalone project)
 │   ├── app/
+│   │   ├── db/
+│   │   │   └── schema.ts    # Database schema (Drizzle)
 │   │   ├── routes/          # File-based routing
 │   │   ├── services/        # Service layer (auth, db, cache)
 │   │   └── root.tsx
-│   ├── prisma/
-│   │   └── schema.prisma    # Database schema
+│   ├── drizzle.config.ts    # Drizzle Kit config
 │   └── package.json
 ├── mobile/                   # Expo React Native app (standalone project)
 │   ├── app/                 # Expo Router
@@ -114,11 +115,8 @@ This starts PostgreSQL and Redis containers (`saas-postgres` and `saas-redis`).
 ```bash
 cd web
 
-# Generate Prisma client
-npm run db:generate
-
-# Run migrations
-npm run db:migrate
+# Push the schema to the database
+npm run db:push
 ```
 
 ### Running the Apps
@@ -160,9 +158,9 @@ There are no root-level scripts — run commands from the project you're working
 - `npm run typecheck` - Type check
 - `npm run test` - Run tests
 - `npm run check` - Format + typecheck + test + build
-- `npm run db:generate` - Generate Prisma client
-- `npm run db:migrate` - Run database migrations
-- `npm run db:studio` - Open Prisma Studio
+- `npm run db:push` - Push schema changes to the database
+- `npm run db:pull` - Introspect the database into a schema file
+- `npm run db:studio` - Open Drizzle Studio
 - `npm run email:dev` - Preview email templates
 
 ### Mobile App (in `mobile/`)
@@ -197,7 +195,7 @@ The web app uses a modular service layer in `web/app/services/`:
   - `requireAuth()` - Require authentication
   - `getOrCreateUser()` - Sync Clerk user with database
 
-- **`db.server.ts`** - Wraps Prisma client
+- **`db.server.ts`** - Wraps Drizzle client (node-postgres pool)
   - Singleton pattern for connection pooling
   - Direct access to `db` instance
 
@@ -251,11 +249,11 @@ The template includes a built-in admin panel at `/admin` with:
   - Job details with data, timestamps, and error info
   - Filter by queue and job status
 
-To grant yourself admin access: open Prisma Studio (`cd web && npm run db:studio`), find your user in the User table, and set `isAdmin: true`.
+To grant yourself admin access: open Drizzle Studio (`cd web && npm run db:studio`), find your user in the User table, and set `isAdmin: true`.
 
 ### Database Schema
 
-See `web/prisma/schema.prisma` for the database schema. Example models:
+See `web/app/db/schema.ts` for the database schema. Example models:
 
 - **User** - Synced with Clerk authentication
 
@@ -283,22 +281,22 @@ The mobile app uses `@clerk/clerk-expo` with secure token storage.
 
 ## 🗄️ Database
 
-PostgreSQL database with Prisma ORM. The schema and migrations live in `web/prisma/`, and all Prisma commands run from `web/`:
+PostgreSQL database with Drizzle ORM. The schema lives in `web/app/db/schema.ts`, and all Drizzle commands run from `web/`:
 
 ```bash
 cd web
 
-# Create a new migration
-npx prisma migrate dev --name your_migration_name
+# Push schema changes to the database
+npm run db:push
 
-# Reset database (WARNING: destroys data)
-npx prisma migrate reset
+# Introspect an existing database into a schema file
+npm run db:pull
 
-# Open Prisma Studio
+# Open Drizzle Studio
 npm run db:studio
 ```
 
-**Note:** The Prisma CLI automatically loads environment variables from `web/.env`, so make sure that file has your `DATABASE_URL` configured.
+**Note:** `drizzle.config.ts` loads environment variables from `web/.env` (via dotenv), so make sure that file has your `DATABASE_URL` configured.
 
 ## 📋 Job Queues
 
@@ -427,7 +425,7 @@ Handy test scripts for the optional services (run from `web/`):
 
 **Port already in use:** kill the process (`lsof -ti:3000 | xargs kill`) or restart the Docker services (`docker compose down && docker compose up -d` from the repo root).
 
-**"Prisma Client not found":** run `cd web && npm run db:generate`.
+**"relation does not exist" database errors:** run `cd web && npm run db:push` to sync the schema.
 
 **"Module not found: @saas-template/shared":** make sure dependencies are installed in the project that errors (`npm install` in `web/` or `mobile/`), then restart your IDE's TypeScript server. Web resolves the package via a tsconfig path alias; mobile via a `file:../packages/shared` dependency.
 
@@ -444,7 +442,7 @@ docker compose up -d
 - [React Router 7](https://reactrouter.com)
 - [Expo Documentation](https://docs.expo.dev)
 - [Clerk Documentation](https://clerk.com/docs)
-- [Prisma Documentation](https://www.prisma.io/docs)
+- [Drizzle Documentation](https://orm.drizzle.team/docs/overview)
 - [Redis Documentation](https://redis.io/docs)
 - [BullMQ Documentation](https://docs.bullmq.io)
 - [OpenRouter Documentation](https://openrouter.ai/docs)
@@ -466,7 +464,7 @@ Built with amazing open-source projects:
 - React Router 7
 - Expo
 - Clerk
-- Prisma
+- Drizzle
 - Redis
 - BullMQ
 - OpenRouter

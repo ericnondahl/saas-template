@@ -1,5 +1,5 @@
 /**
- * User type matching Prisma User model
+ * User type matching the database User model
  */
 export interface User {
   id: string;

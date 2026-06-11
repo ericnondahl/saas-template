@@ -1,6 +1,8 @@
+import { asc, gte } from "drizzle-orm";
 import type { ApiResponse } from "@saas-template/shared";
 import { requireAdminAuth } from "../services/admin.server";
 import { db } from "../services/db.server";
+import { openRouterLogs } from "../db/schema";
 
 export interface DailyUsage {
   date: string;
@@ -42,15 +44,9 @@ export async function loader(args: any) {
   startDate.setHours(0, 0, 0, 0);
 
   // Fetch logs within the date range
-  // Using type assertion as Prisma types may need TS server restart
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const logs = await (db as any).openRouterLog.findMany({
-    where: {
-      createdAt: {
-        gte: startDate,
-      },
-    },
-    orderBy: { createdAt: "asc" },
+  const logs = await db.query.openRouterLogs.findMany({
+    where: gte(openRouterLogs.createdAt, startDate),
+    orderBy: asc(openRouterLogs.createdAt),
   });
 
   // Calculate totals

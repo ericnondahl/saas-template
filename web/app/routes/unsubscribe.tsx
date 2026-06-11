@@ -1,6 +1,8 @@
 import { data, Form } from "react-router";
+import { eq } from "drizzle-orm";
 import type { Route } from "./+types/unsubscribe";
 import { db } from "../services/db.server";
+import { users } from "../db/schema";
 import { verifyUnsubscribeToken } from "../services/unsubscribe.server";
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -29,12 +31,9 @@ export async function action({ request }: Route.ActionArgs) {
   }
 
   try {
-    // updateMany so a since-deleted account doesn't throw — the response is
-    // identical whether or not the user still exists (no account enumeration).
-    await db.user.updateMany({
-      where: { id: userId },
-      data: { emailSubscribed: false },
-    });
+    // A no-op update for a since-deleted account doesn't throw — the response
+    // is identical whether or not the user still exists (no account enumeration).
+    await db.update(users).set({ emailSubscribed: false }).where(eq(users.id, userId));
 
     return data({
       success: true,

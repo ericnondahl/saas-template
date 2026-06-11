@@ -125,7 +125,7 @@ export function AppView() {
         <Card>
           <CardHeader>
             <CardTitle>Database Ready</CardTitle>
-            <CardDescription>Prisma ORM with PostgreSQL and Redis caching</CardDescription>
+            <CardDescription>Drizzle ORM with PostgreSQL and Redis caching</CardDescription>
           </CardHeader>
         </Card>
       </div>

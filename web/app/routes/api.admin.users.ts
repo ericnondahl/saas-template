@@ -1,6 +1,8 @@
+import { asc } from "drizzle-orm";
 import type { ApiResponse } from "@saas-template/shared";
 import { requireAdminAuth } from "../services/admin.server";
 import { db } from "../services/db.server";
+import { users } from "../db/schema";
 
 export interface AdminUserDTO {
   id: string;
@@ -19,9 +21,9 @@ export async function loader(args: any) {
   await requireAdminAuth(args);
 
   // Fetch all users from database
-  const users = await db.user.findMany({
-    orderBy: { email: "asc" },
-    select: {
+  const allUsers = await db.query.users.findMany({
+    orderBy: asc(users.email),
+    columns: {
       id: true,
       email: true,
       firstName: true,
@@ -32,6 +34,6 @@ export async function loader(args: any) {
 
   return Response.json({
     success: true,
-    data: users,
+    data: allUsers,
   } as ApiResponse<AdminUserDTO[]>);
 }

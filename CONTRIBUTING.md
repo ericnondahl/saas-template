@@ -13,7 +13,7 @@ Thank you for your interest in contributing to the SaaS Template!
 
 There is no root `package.json` — `web/`, `mobile/`, and `packages/shared/` are independent npm projects. `cd` into the one you're working on to run commands.
 
-- `web/` - React Router 7 web application (owns the Prisma schema in `web/prisma/`)
+- `web/` - React Router 7 web application (owns the Drizzle schema in `web/app/db/schema.ts`)
 - `mobile/` - Expo React Native mobile application
 - `packages/shared/` - Shared TypeScript types
 
@@ -121,8 +121,8 @@ export async function doSomething(param: string): Promise<Result> {
 
 When modifying the database schema:
 
-1. Edit `web/prisma/schema.prisma`
-2. Create a migration: `cd web && npm run db:migrate`
+1. Edit `web/app/db/schema.ts`
+2. Apply the changes: `cd web && npm run db:push`
 3. Update types in `packages/shared/src/types/`
 4. Test with both web and mobile apps
 

@@ -23,8 +23,8 @@ console.log("");
 try {
   // Fetch all users from the database
   console.log("Fetching users from database...");
-  const users = await db.user.findMany({
-    select: {
+  const users = await db.query.users.findMany({
+    columns: {
       id: true,
       email: true,
       firstName: true,
@@ -71,5 +71,5 @@ await cleanup();
 
 async function cleanup() {
   await testQueue.close();
-  await db.$disconnect();
+  await db.$client.end();
 }

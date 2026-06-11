@@ -1,13 +1,13 @@
 import { getAuth } from "@clerk/react-router/server";
 import type { ApiResponse } from "@saas-template/shared";
-import type { User as PrismaUser } from "@prisma/client";
+import type { User } from "../db/schema";
 import { getUserByClerkId } from "./user.server";
 
 /**
  * Requires the current user to be authenticated and an admin.
  * Returns the admin user if authorized, or throws a Response with appropriate error.
  */
-export async function requireAdminAuth(args: any): Promise<PrismaUser> {
+export async function requireAdminAuth(args: any): Promise<User> {
   const { userId } = await getAuth(args);
 
   if (!userId) {

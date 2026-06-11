@@ -118,26 +118,26 @@ VITE_POSTHOG_HOST=https://us.i.posthog.com
 
 Get from [posthog.com](https://posthog.com).
 
-## Step 7: Run Database Migrations
+## Step 7: Push the Database Schema
 
-After the first deploy, you need to run Prisma migrations.
+After the first deploy, you need to push the Drizzle schema to the database.
 
 ### Option A: Railway CLI (Recommended)
 
 1. Install Railway CLI: `npm install -g @railway/cli`
 2. Login: `railway login`
 3. Link to your project: `railway link`
-4. Run migrations against the web service (from `web/`, where the Prisma schema lives):
+4. Push the schema against the web service (from `web/`, where the Drizzle config lives):
 
 ```bash
-cd web && railway run -s web npx prisma migrate deploy
+cd web && railway run -s web npx drizzle-kit push
 ```
 
 ### Option B: Railway Shell
 
 1. Click on the **web** service
 2. Go to **Settings** → **Railway Shell**
-3. Run: `npx prisma migrate deploy`
+3. Run: `npx drizzle-kit push`
 
 ## Step 8: Set Up Custom Domain (Optional)
 
@@ -190,12 +190,12 @@ Ensure you're using the Railway reference variable `${{Postgres.DATABASE_URL}}` 
 2. Verify `REDIS_URL` is set correctly
 3. Ensure worker service is running (not crashed)
 
-### Prisma migration fails
+### Schema push fails
 
-Run migrations manually via Railway CLI:
+Run the push manually via Railway CLI:
 
 ```bash
-cd web && railway run -s web npx prisma migrate deploy
+cd web && railway run -s web npx drizzle-kit push
 ```
 
 ## Local Development with Railway
